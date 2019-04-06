@@ -8,19 +8,21 @@ import (
   "math/cmplx"
   )
 
-func GenerateImage() *bytes.Buffer {
-  const (
-    xmin, ymin, xmax, ymax = -2, -2, 2, 2
-    width, height = 2048, 2048
-  )
+func GenerateImage(prm Params) *bytes.Buffer {
+  xmin := prm.XMin
+  xmax := prm.XMax
+  ymin := prm.YMin
+  ymax := prm.YMax
+  height := prm.Height
+  width := prm.Width
 
   img := image.NewRGBA(image.Rect(0, 0, width, height))
   for py := 0; py < height; py++ {
-    y := float64(py) / height * (ymax - ymin) + ymin
+    y := float64(py) / float64(height) * (ymax - ymin) + ymin
     for px := 0; px < width; px++ {
-      x := float64(px) / width * (xmax - xmin) + xmin
+      x := float64(px) / float64(width) * (xmax - xmin) + xmin
       z := complex(x, y)
-      img.Set(px, py, mandelbrot(z))
+      img.Set(px, py, mandelbrot(z, prm))
     }
   }
 
@@ -29,12 +31,12 @@ func GenerateImage() *bytes.Buffer {
   return buffer
 }
 
-func mandelbrot(z complex128) color.Color {
+func mandelbrot(z complex128, prm Params) color.Color {
   const (
-    iterations = 200
     contrast = 15
-    escape = 2
   )
+  iterations := prm.Iterations
+  escape := prm.Escape
 
   var v complex128
   for n := uint8(0); n < iterations; n++ {

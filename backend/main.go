@@ -1,47 +1,24 @@
 package main
 
-//import "fmt"
 import (
-  "image"
-  "image/color"
-  "image/png"
-  "math/cmplx"
-  "os"
+//  "fmt"
+  "log"
+  "net/http"
+  "strconv"
   )
+
+
 
 func main() {
-  const (
-    xmin, ymin, xmax, ymax = -2, -2, 2, 2
-    width, height = 1024, 1024
-  )
-
-  img := image.NewRGBA(image.Rect(0, 0, width, height))
-  for py := 0; py < height; py++ {
-    y := float64(py) / height * (ymax - ymin) + ymin
-    for px := 0; px < width; px++ {
-      x := float64(px) / width * (xmax - xmin) + xmin
-      z := complex(x, y)
-      img.Set(px, py, mandelbrot(z))
-    }
-  }
-
-  f, _ := os.Create("image.png")
-  png.Encode(f, img)
+  http.HandleFunc("/", handler)
+  log.Fatal(http.ListenAndServe("localhost:8000", nil))
 }
 
-func mandelbrot(z complex128) color.Color {
-  const (
-    iterations = 200
-    contrast = 15
-    escape = 2
-  )
-
-  var v complex128
-  for n := uint8(0); n < iterations; n++ {
-    v = v * v + z
-    if cmplx.Abs(v) > escape {
-      return color.Gray{255 - contrast * n}
-    }
+func handler(w http.ResponseWriter, r *http.Request) {
+  buffer := generateImage()
+  w.Header().Set("Content-Type", "image/png")
+  w.Header().Set("Content-Length", strconv.Itoa(len(buffer.Bytes())))
+  if _, err := w.Write(buffer.Bytes()); err != nil {
+    log.Println("unable to write image.")
   }
-  return color.Black
 }

@@ -5,8 +5,6 @@
     <link rel="stylesheet" href="main.css">
   </head>
   <body>
-
-
     <div class="columns" id="app">
         <div class="column is-one-third">
           <section class="section">
@@ -15,9 +13,28 @@
               <div class="field">
                 <label class="label">X-Min</label>
                 <div class="control">
-                  <input v-model="form.xmin" class="input" type="text" placeholder="-1.0">
+                  <input v-model="form.xmin" class="input" type="text">
                 </div>
               </div>
+              <div class="field">
+                <label class="label">X-Max</label>
+                <div class="control">
+                  <input v-model="form.xmax" class="input" type="text">
+                </div>
+              </div>
+              <div class="field">
+                <label class="label">Y-Min</label>
+                <div class="control">
+                  <input v-model="form.ymin" class="input" type="text">
+                </div>
+              </div>
+              <div class="field">
+                <label class="label">Y-Max</label>
+                <div class="control">
+                  <input v-model="form.ymax" class="input" type="text">
+                </div>
+              </div>
+
             </section>
             <section class="debug">
               <ul>
@@ -30,7 +47,7 @@
         </div>
         <div class="column is-one-third">
           <div id="image">
-            <img src="http://localhost:8000/?xmax=1&ymin=-1&ymax=1&width=500&height=500" alt="Fractal"/>
+            <img :src="fractal_url" alt="Fractal"/>
           </div>
         </div>
       </div>

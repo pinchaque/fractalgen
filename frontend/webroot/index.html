@@ -47,7 +47,7 @@
         </div>
         <div class="column is-two-thirds">
           <div id="image">
-            <img :src="fractal_url" alt="Fractal"/>
+            <img id="fractal" :src="fractal_url" alt="Fractal" v-on:click="zoomIn"/>
           </div>
         </div>
       </div>

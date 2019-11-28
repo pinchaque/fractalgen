@@ -1,53 +1,62 @@
 var app = new Vue({
   el: '#app',
   data: {
-    img_width: 500,
-    img_height: 500,
-    zoom_factor: 2.0,
+    imgWidth: 500,
+    imgHeight: 500,
+    zoomFactor: 2.0,
+    cursorX: 0,
+    cursorY: 0,
+    coordX: 0,
+    coordY: 0,
     form : {
-        xmin: -2.0,
-        xmax: 1.0,
-        ymin: -1.1,
-        ymax: 1.1
+        xMin: -2.0,
+        xMax: 1.0,
+        yMin: -1.1,
+        yMax: 1.1
     },
   },
   computed: {
-    fractal_url: function () {
-      return "http://localhost:8000/?xmin=" + this.form.xmin
-        + "&xmax=" + this.form.xmax
-        + "&ymin=" + this.form.ymin
-        + "&ymax=" + this.form.ymax
-        + "&width=" + this.img_width
-        + "&height=" + this.img_height
+    fractalUrl: function () {
+      return "http://localhost:8000/?xmin=" + this.form.xMin
+        + "&xmax=" + this.form.xMax
+        + "&ymin=" + this.form.yMin
+        + "&ymax=" + this.form.yMax
+        + "&width=" + this.imgWidth
+        + "&height=" + this.imgHeight;
     }
   },
   methods: {
+    xRange: function () {
+      return this.form.xMax - this.form.xMin;
+    },
+    yRange: function () {
+      return this.form.yMax - this.form.yMin;
+    },
+    pixelToCoordX: function (v) {
+      var perc = (v - 1.0) / this.imgWidth;
+      return this.form.xMin + (perc * this.xRange());
+    },
+    pixelToCoordY: function (v) {
+      var perc = 1.0 - ((v - 1.0) / this.imgHeight);
+      return this.form.yMin + (perc * this.yRange());
+    },
+    mouseMove: function (event) {
+      this.cursorX = event.offsetX;
+      this.cursorY = event.offsetY;
+      this.coordX = this.pixelToCoordX(event.offsetX);
+      this.coordY = this.pixelToCoordY(event.offsetY);
+    },
     zoomIn: function (event) {
+      var xNew = this.pixelToCoordX(event.offsetX);
+      var yNew = this.pixelToCoordY(event.offsetY);
 
-      xdiff = this.form.xmax - this.form.xmin
-      xperc = (event.offsetX - 1.0) / this.img_width
-      xnew = this.form.xmin + (xperc * xdiff)
+      var diffX = this.xRange() / 2.0 / this.zoomFactor;
+      this.form.xMin = xNew - diffX;
+      this.form.xMax = xNew + diffX;
 
-      ydiff = this.form.ymax - this.form.ymin
-      yperc = 1.0 - ((event.offsetY - 1.0) / this.img_height)
-      ynew = this.form.ymin + (yperc * ydiff)
-
-      xdiff2 = xdiff / 2.0 / this.zoom_factor
-      this.form.xmin = xnew - xdiff2
-      this.form.xmax = xnew + xdiff2
-
-      ydiff2 = ydiff / 2.0 / this.zoom_factor
-      this.form.ymin = ynew - ydiff2
-      this.form.ymax = ynew + ydiff2
-
-      // `this` inside methods points to the Vue instance
-      // `event` is the native DOM event
-      alert('coord[' + event.offsetX + "," + event.offsetY + "]"
-        + ' / perc[' + xperc + "," + yperc + "]"
-        + ' / new[' + xnew + "," + ynew + "]"
-        + ' / x_range[' + this.form.xmin + "," + this.form.xmax + "]"
-        + ' / y_range[' + this.form.ymin + "," + this.form.ymax + "]"
-      )
+      var diffY = this.yRange() / 2.0 / this.zoomFactor;
+      this.form.yMin = yNew - diffY;
+      this.form.yMax = yNew + diffY;
     }
   }
 })

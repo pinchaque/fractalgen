@@ -18,7 +18,7 @@ func GenerateImage(prm Params) *bytes.Buffer {
 
   img := image.NewRGBA(image.Rect(0, 0, width, height))
   for py := 0; py < height; py++ {
-    y := float64(py) / float64(height) * (ymax - ymin) + ymin
+    y := float64(height - py - 1) / float64(height) * (ymax - ymin) + ymin
     for px := 0; px < width; px++ {
       x := float64(px) / float64(width) * (xmax - xmin) + xmin
       z := complex(x, y)
@@ -26,7 +26,7 @@ func GenerateImage(prm Params) *bytes.Buffer {
     }
   }
 
-  buffer := new(bytes.Buffer) 
+  buffer := new(bytes.Buffer)
   png.Encode(buffer, img)
   return buffer
 }

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="utf-8"/>
     <title>FractalGen</title>
     <link rel="stylesheet" href="main.css">
   </head>
@@ -13,41 +14,43 @@
               <div class="field">
                 <label class="label">X-Min</label>
                 <div class="control">
-                  <input v-model="form.xmin" class="input" type="text">
+                  <input v-model="form.xMin" class="input" type="text">
                 </div>
               </div>
               <div class="field">
                 <label class="label">X-Max</label>
                 <div class="control">
-                  <input v-model="form.xmax" class="input" type="text">
+                  <input v-model="form.xMax" class="input" type="text">
                 </div>
               </div>
               <div class="field">
                 <label class="label">Y-Min</label>
                 <div class="control">
-                  <input v-model="form.ymin" class="input" type="text">
+                  <input v-model="form.yMin" class="input" type="text">
                 </div>
               </div>
               <div class="field">
                 <label class="label">Y-Max</label>
                 <div class="control">
-                  <input v-model="form.ymax" class="input" type="text">
+                  <input v-model="form.yMax" class="input" type="text">
                 </div>
               </div>
 
             </section>
             <section class="debug">
-              <ul>
-                <li v-for="(item, k) in form">
-                  <strong>{{ k }}:</strong> {{ item }}
-                </li>
-              </ul>
+              <dl>
+                <dt>Cursor</dt>
+                <dd>[{{ cursorX }}, {{ cursorY }}]</dd>
+                <dt>Coord</dt>
+                <dd>[{{ coordX }}, {{ coordY }}]</dd>
+              </dl>
             </section>
           </section>
         </div>
         <div class="column is-two-thirds">
           <div id="image">
-            <img id="fractal" :src="fractal_url" alt="Fractal" v-on:click="zoomIn"/>
+            <img id="fractal" :src="fractalUrl" alt="Fractal"
+              v-on:click="zoomIn" v-on:mousemove="mouseMove"/>
           </div>
         </div>
       </div>

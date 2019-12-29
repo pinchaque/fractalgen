@@ -6,53 +6,26 @@
     <link rel="stylesheet" href="main.css">
   </head>
   <body>
-    <div class="columns" id="app">
-        <div class="column is-one-third">
-          <section class="section">
-            <h1 class="title">Parameters</h1>
-            <section class="form">
-              <div class="field">
-                <label class="label">X-Min</label>
-                <div class="control">
-                  <input v-model="form.xMin" class="input" type="text">
-                </div>
-              </div>
-              <div class="field">
-                <label class="label">X-Max</label>
-                <div class="control">
-                  <input v-model="form.xMax" class="input" type="text">
-                </div>
-              </div>
-              <div class="field">
-                <label class="label">Y-Min</label>
-                <div class="control">
-                  <input v-model="form.yMin" class="input" type="text">
-                </div>
-              </div>
-              <div class="field">
-                <label class="label">Y-Max</label>
-                <div class="control">
-                  <input v-model="form.yMax" class="input" type="text">
-                </div>
-              </div>
+    <div id="app">
+      <div id="image" ref="img">
+        <img id="fractal" :src="fractalUrl" alt="Fractal"
+        v-on:click="zoomIn"
+        v-on:mousemove="mouseMove"/>
+      </div>
 
-            </section>
-            <section class="debug">
-              <dl>
-                <dt>Cursor</dt>
-                <dd>[{{ cursorX }}, {{ cursorY }}]</dd>
-                <dt>Coord</dt>
-                <dd>[{{ coordX }}, {{ coordY }}]</dd>
-              </dl>
-            </section>
-          </section>
-        </div>
-        <div class="column is-two-thirds">
-          <div id="image">
-            <img id="fractal" :src="fractalUrl" alt="Fractal"
-              v-on:click="zoomIn" v-on:mousemove="mouseMove"/>
-          </div>
-        </div>
+      <div id="infoPanel">
+        <dl>
+          <dt>Start</dt>
+          <dd>[{{ xMin }}, {{ yMin }}]</dd>
+          <dt>End</dt>
+          <dd>[{{ xMax }}, {{ yMax }}]</dd>
+          <dt>Cursor</dt>
+          <dd>[{{ cursorX }}, {{ cursorY }}]</dd>
+          <dt>Coord</dt>
+          <dd>[{{ coordX }}, {{ coordY }}]</dd>
+          <dt>Image Size</dt>
+          <dd>[{{ imgWidth }}, {{ imgHeight }}]</dd>
+        </dl>
       </div>
     </div>
   </div>

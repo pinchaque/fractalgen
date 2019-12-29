@@ -2,6 +2,8 @@ body {
   background-color: lightblue;
   font-family: verdana;
   font-size: 70%;
+  margin: 0;
+  padding: 0;
 }
 
 h1 {
@@ -13,12 +15,16 @@ p {
   font-size: 20px;
 }
 
-.is-one-third {
-  float: left;
-  width: 33%;
+div#infoPanel {
+  position: fixed;
+  color: #ddd;
+  top: 5px;
+  right: 5px;
+  width: 300px;
+  border: 2px solid #333;
+  background: rgba(64, 64, 64, 0.8);
 }
 
-.is-two-thirds {
-  float: left;
-  width: 66%;
+#image {
+  height: 500px;
 }

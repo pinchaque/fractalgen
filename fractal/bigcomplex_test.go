@@ -33,19 +33,32 @@ func GetData() []complex128 {
 }
 
 func TestIdentity(t *testing.T) {
-  for i, v := range GetData() {
-    t.Logf("Data[%d] = %f", i, v)
-    c := NewComplex(real(v), imag(v))
+  for _, v := range GetData() {
+    c := NewComplex(v)
     CompareComplex(t, v, c, "Basic identity")
 	}
 }
 
+func TestString(t *testing.T) {
+  for i, v := range GetData() {
+    c := NewComplex(v)
+    CompareComplex(t, v, c, "String representation")
+    str_exp := fmt.Sprintf("%0.10g", v)
+    str_act := c.String()
+    if str_exp != str_act {
+      t.Errorf("[%d] expected '%s' got ''%s'", i, str_exp, str_act)
+    }
+	}
+}
+
 func TestSum(t *testing.T) {
-  v1 := complex(5.8823, -4991.334)
-  v2 := complex(-3.9811, 84.511)
-  exp := v1 + v2
-  c1 := NewComplex(real(v1), imag(v1))
-  c2 := NewComplex(real(v2), imag(v2))
-  c1.Add(c1, c2)
-  CompareComplex(t, exp, c1, fmt.Sprintf("Adding %f and %f", v1, v2))
+  cmplx := complex(5.8823, -4991.334)
+  big_cmplx := NewComplex(cmplx)
+  CompareComplex(t, cmplx, big_cmplx, fmt.Sprintf("Start of test"))
+
+  for i, c := range GetData() {
+    cmplx += c
+    big_cmplx.Add(big_cmplx, NewComplex(c))
+    CompareComplex(t, cmplx, big_cmplx, fmt.Sprintf("Sum[%d] adding %f", i, c))
+  }
 }

@@ -81,19 +81,23 @@ func (z *Complex) Quo(x, y *Complex) *Complex {
   c := &y.Real
   d := &y.Imag
 
+
   ac := new(big.Float).Mul(a, c)
   ad := new(big.Float).Mul(a, d)
   bc := new(big.Float).Mul(b, c)
   bd := new(big.Float).Mul(b, d)
   c2 := new(big.Float).Mul(c, c)
   d2 := new(big.Float).Mul(d, d)
-  c2d2 := new(big.Float).Mul(c2, d2)
+  c2d2 := new(big.Float).Add(c2, d2)
+  acbd := new(big.Float).Add(ac, bd)
+  bcad := new(big.Float).Sub(bc, ad)
 
   // Real: (ac+bd)/(c^2 + d^2)
-  z.Real.Quo(ac.Add(ac, bd), c2d2)
+  z.Real.Quo(acbd, c2d2)
 
   // Imag: (bc-ad)/(c^2 + d^2)
-  z.Imag.Quo(bc.Sub(bc, ad), c2d2)
+  z.Imag.Quo(bcad, c2d2)
+
 
   return z
 }

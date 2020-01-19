@@ -35,6 +35,12 @@ func (z *Complex) String() string {
     z.Imag.String())
 }
 
+func (z *Complex) Conj(x *Complex) *Complex {
+  z.Real = x.Real
+  z.Imag.Mul(big.NewFloat(-1.0), &x.Imag)
+  return z
+}
+
 func (z *Complex) Add(x, y *Complex) *Complex {
   z.Real.Add(&x.Real, &y.Real)
   z.Imag.Add(&x.Imag, &y.Imag)
@@ -49,25 +55,45 @@ func (z *Complex) Sub(x, y *Complex) *Complex {
 
 func (z *Complex) Mul(x, y *Complex) *Complex {
   // (a+bi)(c+di) = ac + adi + bci + bdi2
-  a := x.Real
-  b := x.Imag
-  c := y.Real
-  d := y.Imag
+  a := &x.Real
+  b := &x.Imag
+  c := &y.Real
+  d := &y.Imag
 
-  ac := new(big.Float)
-  ac.Mul(&a, &c)
-
-  ad := new(big.Float)
-  ad.Mul(&a, &d)
-
-  bc := new(big.Float)
-  bc.Mul(&b, &c)
-
-  bd := new(big.Float)
-  bd.Mul(&b, &d)
+  ac := new(big.Float).Mul(a, c)
+  ad := new(big.Float).Mul(a, d)
+  bc := new(big.Float).Mul(b, c)
+  bd := new(big.Float).Mul(b, d)
 
   z.Real.Sub(ac, bd) // ac + bdi^2 = ac - bd
   z.Imag.Add(ad, bc) // adi + bci
+
+  return z
+}
+
+func (z *Complex) Quo(x, y *Complex) *Complex {
+  // (a+bi) / (c+di)
+  // Real: (ac+bd)/(c^2 + d^2)
+  // Imag: (bc-ad)/(c^2 + d^2)
+
+  a := &x.Real
+  b := &x.Imag
+  c := &y.Real
+  d := &y.Imag
+
+  ac := new(big.Float).Mul(a, c)
+  ad := new(big.Float).Mul(a, d)
+  bc := new(big.Float).Mul(b, c)
+  bd := new(big.Float).Mul(b, d)
+  c2 := new(big.Float).Mul(c, c)
+  d2 := new(big.Float).Mul(d, d)
+  c2d2 := new(big.Float).Mul(c2, d2)
+
+  // Real: (ac+bd)/(c^2 + d^2)
+  z.Real.Quo(ac.Add(ac, bd), c2d2)
+
+  // Imag: (bc-ad)/(c^2 + d^2)
+  z.Imag.Quo(bc.Sub(bc, ad), c2d2)
 
   return z
 }

@@ -101,3 +101,10 @@ func (z *Complex) Quo(x, y *Complex) *Complex {
 
   return z
 }
+
+func (z *Complex) Abs() *big.Float {
+  r2 := new(big.Float).Mul(&z.Real, &z.Real)
+  i2 := new(big.Float).Mul(&z.Imag, &z.Imag)
+  return new(big.Float).Sqrt(r2.Add(r2, i2))
+}
+

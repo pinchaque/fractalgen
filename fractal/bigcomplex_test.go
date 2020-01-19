@@ -120,6 +120,16 @@ func TestQuo(t *testing.T) {
   for i, c := range GetData() {
     cmplx /= c
     big_cmplx.Quo(big_cmplx, NewComplex(c))
-    CompareComplex(t, cmplx, big_cmplx, fmt.Sprintf("Quo[%d] dividing by %f", i, c))
+    CompareComplex(t, cmplx, big_cmplx, fmt.Sprintf("Quo[%d] dividing by %f", 
+	i, c))
   }
 }
+
+func TestAbs(t *testing.T) {
+  for i, c := range GetData() {
+    act, _ := NewComplex(c).Abs().Float64()
+    CompareFloat64(t, cmplx.Abs(c), act,
+        fmt.Sprintf("Abs[%d] Abs(%f)", i, c))
+  }
+}
+

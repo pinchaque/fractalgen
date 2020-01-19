@@ -40,3 +40,34 @@ func (z *Complex) Add(x, y *Complex) *Complex {
   z.Imag.Add(&x.Imag, &y.Imag)
   return z
 }
+
+func (z *Complex) Sub(x, y *Complex) *Complex {
+  z.Real.Sub(&x.Real, &y.Real)
+  z.Imag.Sub(&x.Imag, &y.Imag)
+  return z
+}
+
+func (z *Complex) Mul(x, y *Complex) *Complex {
+  // (a+bi)(c+di) = ac + adi + bci + bdi2
+  a := x.Real
+  b := x.Imag
+  c := y.Real
+  d := y.Imag
+
+  ac := new(big.Float)
+  ac.Mul(&a, &c)
+
+  ad := new(big.Float)
+  ad.Mul(&a, &d)
+
+  bc := new(big.Float)
+  bc.Mul(&b, &c)
+
+  bd := new(big.Float)
+  bd.Mul(&b, &d)
+
+  z.Real.Sub(ac, bd) // ac + bdi^2 = ac - bd
+  z.Imag.Add(ad, bc) // adi + bci
+
+  return z
+}

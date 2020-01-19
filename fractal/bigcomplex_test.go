@@ -51,7 +51,7 @@ func TestString(t *testing.T) {
 	}
 }
 
-func TestSum(t *testing.T) {
+func TestAdd(t *testing.T) {
   cmplx := complex(5.8823, -4991.334)
   big_cmplx := NewComplex(cmplx)
   CompareComplex(t, cmplx, big_cmplx, fmt.Sprintf("Start of test"))
@@ -59,6 +59,30 @@ func TestSum(t *testing.T) {
   for i, c := range GetData() {
     cmplx += c
     big_cmplx.Add(big_cmplx, NewComplex(c))
-    CompareComplex(t, cmplx, big_cmplx, fmt.Sprintf("Sum[%d] adding %f", i, c))
+    CompareComplex(t, cmplx, big_cmplx, fmt.Sprintf("Add[%d] adding %f", i, c))
+  }
+}
+
+func TestSub(t *testing.T) {
+  cmplx := complex(5.8823, -4991.334)
+  big_cmplx := NewComplex(cmplx)
+  CompareComplex(t, cmplx, big_cmplx, fmt.Sprintf("Start of test"))
+
+  for i, c := range GetData() {
+    cmplx -= c
+    big_cmplx.Sub(big_cmplx, NewComplex(c))
+    CompareComplex(t, cmplx, big_cmplx, fmt.Sprintf("Sub[%d] subtracting %f", i, c))
+  }
+}
+
+func TestMul(t *testing.T) {
+  cmplx := complex(5.8823, -4991.334)
+  big_cmplx := NewComplex(cmplx)
+  CompareComplex(t, cmplx, big_cmplx, fmt.Sprintf("Start of test"))
+
+  for i, c := range GetData() {
+    cmplx *= c
+    big_cmplx.Mul(big_cmplx, NewComplex(c))
+    CompareComplex(t, cmplx, big_cmplx, fmt.Sprintf("Mul[%d] multiplying %f", i, c))
   }
 }

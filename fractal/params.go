@@ -1,13 +1,18 @@
 package fractal
 
+import (
+  "math/big"
+)
+
+
 type Params struct {
-  XMin        float64
-  XMax        float64
-  YMin        float64
-  YMax        float64
+  XMin        *big.Float
+  XMax        *big.Float
+  YMin        *big.Float
+  YMax        *big.Float
   Width       int
   Height      int
   Iterations  uint8
-  Escape      float64
+  Escape      *big.Float
 }
 

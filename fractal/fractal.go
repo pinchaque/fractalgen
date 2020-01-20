@@ -5,23 +5,49 @@ import (
   "image"
   "image/color"
   "image/png"
-  "math/cmplx"
+  "math/big"
   )
 
-func GenerateImage(prm Params) *bytes.Buffer {
-  xmin := prm.XMin
-  xmax := prm.XMax
+func PixelToCoordY(prm Params, p int) *big.Float {
+  //y := float64(height - py - 1) / float64(height) * (ymax - ymin) + ymin
   ymin := prm.YMin
   ymax := prm.YMax
+  height := prm.Height
+  yrange := new(big.Float).Sub(ymax, ymin)
+
+  y := new(big.Float)
+  y.Quo(big.NewFloat(float64(height - p - 1)), big.NewFloat(float64(height)))
+  y.Mul(y, yrange)
+  y.Add(y, ymin)
+  return y
+}
+
+func PixelToCoordX(prm Params, p int) *big.Float {
+  // x := float64(px) / float64(width) * (xmax - xmin) + xmin
+  xmin := prm.XMin
+  xmax := prm.XMax
+  width := prm.Width
+  xrange := new(big.Float).Sub(xmax, xmin)
+
+  x := new(big.Float)
+  x.Quo(big.NewFloat(float64(p)), big.NewFloat(float64(width)))
+  x.Mul(x, xrange)
+  x.Add(x, xmin)
+  return x
+}
+
+func GenerateImage(prm Params) *bytes.Buffer {
   height := prm.Height
   width := prm.Width
 
   img := image.NewRGBA(image.Rect(0, 0, width, height))
   for py := 0; py < height; py++ {
-    y := float64(height - py - 1) / float64(height) * (ymax - ymin) + ymin
+    y := PixelToCoordY(prm, py)
     for px := 0; px < width; px++ {
-      x := float64(px) / float64(width) * (xmax - xmin) + xmin
-      z := complex(x, y)
+      x := PixelToCoordX(prm, px)
+      z := new(Complex)
+      z.Real = *x
+      z.Imag = *y
       img.Set(px, py, mandelbrot(z, prm))
     }
   }
@@ -31,17 +57,19 @@ func GenerateImage(prm Params) *bytes.Buffer {
   return buffer
 }
 
-func mandelbrot(z complex128, prm Params) color.Color {
+func mandelbrot(z *Complex, prm Params) color.Color {
   const (
     contrast = 15
   )
   iterations := prm.Iterations
   escape := prm.Escape
 
-  var v complex128
+  v := new(Complex)
   for n := uint8(0); n < iterations; n++ {
-    v = v * v + z
-    if cmplx.Abs(v) > escape {
+    // v = v * v + z
+    v.Mul(v, v)
+    v.Add(v, z)
+    if v.Abs().Cmp(escape) == 1 {
       return color.Gray{255 - contrast * n}
     }
   }

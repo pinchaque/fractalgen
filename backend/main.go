@@ -6,6 +6,7 @@ import (
   "log"
   "net/http"
   "strconv"
+  "math/big"
   )
 
 
@@ -21,7 +22,17 @@ func getFloat(r *http.Request, str string, dflt float64) float64 {
       return dflt
     }
     ret, _ := strconv.ParseFloat(val, 64)
-    return ret 
+    return ret
+}
+
+func getBigFloat(r *http.Request, str string, dflt *big.Float) *big.Float {
+   val := r.URL.Query().Get(str)
+    if val == "" {
+      return dflt
+    }
+
+    ret, _, _ := new(big.Float).Parse(val, 10)
+    return ret
 }
 
 func getInt(r *http.Request, str string, dflt int) int {
@@ -35,14 +46,14 @@ func getInt(r *http.Request, str string, dflt int) int {
 
 func getParams(r *http.Request) fractal.Params {
   var prm fractal.Params
-  prm.XMin = getFloat(r, "xmin", -2.0)
-  prm.XMax = getFloat(r, "xmax", 2.0)
-  prm.YMin = getFloat(r, "ymin", -2.0)
-  prm.YMax = getFloat(r, "ymax", 2.0)
+  prm.XMin = getBigFloat(r, "xmin", big.NewFloat(-2.0))
+  prm.XMax = getBigFloat(r, "xmax", big.NewFloat(2.0))
+  prm.YMin = getBigFloat(r, "ymin", big.NewFloat(-2.0))
+  prm.YMax = getBigFloat(r, "ymax", big.NewFloat(2.0))
   prm.Width = getInt(r, "width", 1024)
   prm.Height = getInt(r, "height", 1024)
   prm.Iterations = uint8(getInt(r, "iterations", 200))
-  prm.Escape = getFloat(r, "escape", 2.0)
+  prm.Escape = getBigFloat(r, "escape", big.NewFloat(2.0))
   return prm
 }
 

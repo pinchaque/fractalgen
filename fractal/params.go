@@ -4,7 +4,6 @@ import (
   "math/big"
 )
 
-
 type Params struct {
   XMin        *big.Float
   XMax        *big.Float

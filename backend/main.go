@@ -69,7 +69,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
     log.Println("unable to write image.")
   }
   elapsed := time.Since(start)
-  log.Printf("[%s, %s] - [%s, %s] %dms",
+  log.Printf("(%s, %s) - (%s, %s) %dms",
     prm.XMin.String(),
     prm.YMin.String(),
     prm.XMax.String(),

@@ -7,30 +7,13 @@ import (
   "os"
   "math/big"
   "time"
+  "github.com/pkg/profile"
   )
 
 func main() {
-  prm, filename := getParams()
   start := time.Now()
 
-  buffer := fractal.GenerateImage(prm)
-
-  f, _ := os.Create(filename)
-  if _, err := f.Write(buffer.Bytes()); err != nil {
-    log.Printf("Unable to write image to %s", filename)
-  }
-  f.Close()
-  elapsed := time.Since(start)
-  log.Printf("(%s, %s) - (%s, %s) %dms -> %s",
-    prm.XMin.String(),
-    prm.YMin.String(),
-    prm.XMax.String(),
-    prm.YMax.String(),
-    elapsed.Milliseconds(),
-    filename)
-}
-
-func getParams() (fractal.Params, string) {
+  // process parameters
   filename := flag.String("o", "image.png", "Output filename (PNG)")
   xmin := flag.Float64("xmin", -2.0, "X minimum")
   xmax := flag.Float64("xmax", 1.5, "X maximum")
@@ -40,8 +23,25 @@ func getParams() (fractal.Params, string) {
   height := flag.Int("height", 1024, "Image height")
   iter := flag.Int("iter", 200, "Iterations for convergence")
   escape := flag.Float64("escape", 2.0, "Escape value")
+  profmode := flag.String("prof", "", "enable profiling mode, one of [cpu, mem, mutex, block]")
+  profpath := flag.String("profpath", ".", "Output path for profile file")
   flag.Parse()
 
+  // start profiling if applicable
+  switch *profmode {
+    case "cpu":
+      defer profile.Start(profile.ProfilePath(*profpath), profile.CPUProfile).Stop()
+    case "mem":
+      defer profile.Start(profile.ProfilePath(*profpath), profile.MemProfile).Stop()
+    case "mutex":
+      defer profile.Start(profile.ProfilePath(*profpath), profile.MutexProfile).Stop()
+    case "block":
+      defer profile.Start(profile.ProfilePath(*profpath), profile.BlockProfile).Stop()
+    default:
+      // do nothing
+  }
+
+  // create our parameters for fractal gen
   var prm fractal.Params
   prm.XMin = big.NewFloat(*xmin)
   prm.XMax = big.NewFloat(*xmax)
@@ -51,5 +51,22 @@ func getParams() (fractal.Params, string) {
   prm.Height = *height
   prm.Iterations = uint8(*iter)
   prm.Escape = big.NewFloat(*escape)
-  return prm, *filename
+
+  // generate the image
+  buffer := fractal.GenerateImage(prm)
+
+  // write the file
+  f, _ := os.Create(*filename)
+  if _, err := f.Write(buffer.Bytes()); err != nil {
+    log.Printf("Unable to write image to %s", *filename)
+  }
+  f.Close()
+  elapsed := time.Since(start)
+  log.Printf("(%s, %s) - (%s, %s) %dms -> %s",
+    prm.XMin.String(),
+    prm.YMin.String(),
+    prm.XMax.String(),
+    prm.YMax.String(),
+    elapsed.Milliseconds(),
+    *filename)
 }

@@ -7,6 +7,7 @@ import (
   "net/http"
   "strconv"
   "math/big"
+  "time"
   )
 
 
@@ -59,10 +60,19 @@ func getParams(r *http.Request) fractal.Params {
 
 func handler(w http.ResponseWriter, r *http.Request) {
   prm := getParams(r)
+  start := time.Now()
+
   buffer := fractal.GenerateImage(prm)
   w.Header().Set("Content-Type", "image/png")
   w.Header().Set("Content-Length", strconv.Itoa(len(buffer.Bytes())))
   if _, err := w.Write(buffer.Bytes()); err != nil {
     log.Println("unable to write image.")
   }
+  elapsed := time.Since(start)
+  log.Printf("(%s, %s) - (%s, %s) %dms",
+    prm.XMin.String(),
+    prm.YMin.String(),
+    prm.XMax.String(),
+    prm.YMax.String(),
+    elapsed.Milliseconds())
 }

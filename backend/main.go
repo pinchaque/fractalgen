@@ -53,7 +53,7 @@ func getParams(r *http.Request) fractal.Params {
   prm.YMax = getBigFloat(r, "ymax", big.NewFloat(2.0))
   prm.Width = getInt(r, "width", 1024)
   prm.Height = getInt(r, "height", 1024)
-  prm.Iterations = uint8(getInt(r, "iterations", 200))
+  prm.Iterations = getInt(r, "iterations", 200)
   prm.Escape = getBigFloat(r, "escape", big.NewFloat(2.0))
   return prm
 }
@@ -62,7 +62,9 @@ func handler(w http.ResponseWriter, r *http.Request) {
   prm := getParams(r)
   start := time.Now()
 
-  buffer := fractal.GenerateImage(prm)
+  result := fractal.GenerateResult(prm)
+  buffer := fractal.CreatePNG(fractal.CreateRGBA(result))
+
   w.Header().Set("Content-Type", "image/png")
   w.Header().Set("Content-Length", strconv.Itoa(len(buffer.Bytes())))
   if _, err := w.Write(buffer.Bytes()); err != nil {

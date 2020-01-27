@@ -49,11 +49,12 @@ func main() {
   prm.YMax = big.NewFloat(*ymax)
   prm.Width = *width
   prm.Height = *height
-  prm.Iterations = uint8(*iter)
+  prm.Iterations = *iter
   prm.Escape = big.NewFloat(*escape)
 
   // generate the image
-  buffer := fractal.GenerateImage(prm)
+  r := fractal.GenerateResult(prm)
+  buffer := fractal.CreatePNG(fractal.CreateRGBA(r))
 
   // write the file
   f, _ := os.Create(*filename)

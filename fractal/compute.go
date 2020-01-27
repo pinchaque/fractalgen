@@ -1,14 +1,10 @@
 package fractal
 
 import (
-  "bytes"
-  "image"
-  "image/color"
-  "image/png"
   "math/big"
   )
 
-func PixelToCoordY(prm Params, p int) *big.Float {
+func pixelToCoordY(prm Params, p int) *big.Float {
   //y := float64(height - py - 1) / float64(height) * (ymax - ymin) + ymin
   ymin := prm.YMin
   ymax := prm.YMax
@@ -22,7 +18,7 @@ func PixelToCoordY(prm Params, p int) *big.Float {
   return y
 }
 
-func PixelToCoordX(prm Params, p int) *big.Float {
+func pixelToCoordX(prm Params, p int) *big.Float {
   // x := float64(px) / float64(width) * (xmax - xmin) + xmin
   xmin := prm.XMin
   xmax := prm.XMax
@@ -36,42 +32,37 @@ func PixelToCoordX(prm Params, p int) *big.Float {
   return x
 }
 
-func GenerateImage(prm Params) *bytes.Buffer {
-  height := prm.Height
-  width := prm.Width
+func GenerateResult(prm Params) *Result {
+  r := new(Result)
+  r.Width = prm.Width
+  r.Height = prm.Height
+  r.Iterations = prm.Iterations
+  r.Data = make([][]int, prm.Width)
 
-  img := image.NewRGBA(image.Rect(0, 0, width, height))
-  for py := 0; py < height; py++ {
-    y := PixelToCoordY(prm, py)
-    for px := 0; px < width; px++ {
-      x := PixelToCoordX(prm, px)
+  for px := 0; px < prm.Width; px++ {
+    x := pixelToCoordX(prm, px)
+    r.Data[px] = make([]int, prm.Height)
+    for py := 0; py < prm.Height; py++ {
+      y := pixelToCoordY(prm, py)
       z := new(Complex)
       z.Real = *x
       z.Imag = *y
-      img.Set(px, py, mandelbrot(z, prm))
+      r.Data[px][py] = mandelbrot(z, prm)
     }
   }
 
-  buffer := new(bytes.Buffer)
-  png.Encode(buffer, img)
-  return buffer
+  return r
 }
 
-func mandelbrot(z *Complex, prm Params) color.Color {
-  const (
-    contrast = 15
-  )
-  iterations := prm.Iterations
-  escape := prm.Escape
-
+func mandelbrot(z *Complex, prm Params) int {
   v := new(Complex)
-  for n := uint8(0); n < iterations; n++ {
+  for n := 0; n < prm.Iterations; n++ {
     // v = v * v + z
     v.Mul(v, v)
     v.Add(v, z)
-    if v.Abs().Cmp(escape) == 1 {
-      return color.Gray{255 - contrast * n}
+    if v.Abs().Cmp(prm.Escape) == 1 {
+      return n
     }
   }
-  return color.Black
+  return prm.Iterations
 }

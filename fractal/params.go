@@ -11,7 +11,6 @@ type Params struct {
   YMax        *big.Float
   Width       int
   Height      int
-  Iterations  uint8
+  Iterations  int
   Escape      *big.Float
 }
-

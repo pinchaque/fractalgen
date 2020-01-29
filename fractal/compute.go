@@ -45,8 +45,8 @@ func GenerateResult(prm Params) *Result {
     for py := 0; py < prm.Height; py++ {
       y := pixelToCoordY(prm, py)
       z := new(Complex)
-      z.Real = *x
-      z.Imag = *y
+      z.Real = x
+      z.Imag = y
       r.Data[px][py] = mandelbrot(z, prm)
     }
   }

@@ -55,7 +55,7 @@ func GenerateResult(prm Params) *Result {
 }
 
 func mandelbrot(z *Complex, prm Params) int {
-  v := new(Complex)
+  v := NewComplex(0)
   for n := 0; n < prm.Iterations; n++ {
     // v = v * v + z
     v.Mul(v, v)

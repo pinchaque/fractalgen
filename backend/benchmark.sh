@@ -8,7 +8,7 @@ if [ ! -d $OUTDIR ] ; then
   mkdir -p $OUTDIR
 fi
 
-FRACTALFLAGS="-width=1024 -height=1024 -o=$OUTDIR/fractal.png"
+FRACTALFLAGS="-width=512 -height=512 -o=$OUTDIR/fractal.png"
 
 go build fractal_cmd.go
 

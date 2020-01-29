@@ -63,11 +63,14 @@ func main() {
   }
   f.Close()
   elapsed := time.Since(start)
-  log.Printf("(%s, %s) - (%s, %s) %dms -> %s",
+  ms_per_pixel := float64(elapsed.Milliseconds()) / 
+    (float64(prm.Width) * float64(prm.Height))
+  log.Printf("(%s, %s) - (%s, %s) %dms %fms/pixel -> %s",
     prm.XMin.String(),
     prm.YMin.String(),
     prm.XMax.String(),
     prm.YMax.String(),
     elapsed.Milliseconds(),
+    ms_per_pixel,
     *filename)
 }

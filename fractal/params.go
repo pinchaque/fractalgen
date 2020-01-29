@@ -12,5 +12,6 @@ type Params struct {
   Width       int
   Height      int
   Iterations  int
+  Threads     int
   Escape      *big.Float
 }

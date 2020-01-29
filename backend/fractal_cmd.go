@@ -22,6 +22,7 @@ func main() {
   width := flag.Int("width", 1024, "Image width")
   height := flag.Int("height", 1024, "Image height")
   iter := flag.Int("iter", 200, "Iterations for convergence")
+  threads := flag.Int("threads", 2, "Computation threads")
   escape := flag.Float64("escape", 2.0, "Escape value")
   profmode := flag.String("prof", "", "enable profiling mode, one of [cpu, mem, mutex, block]")
   profpath := flag.String("profpath", ".", "Output path for profile file")
@@ -50,6 +51,7 @@ func main() {
   prm.Width = *width
   prm.Height = *height
   prm.Iterations = *iter
+  prm.Threads = *threads
   prm.Escape = big.NewFloat(*escape)
 
   // generate the image

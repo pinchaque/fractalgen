@@ -2,6 +2,7 @@ package fractal
 
 import (
   "math/big"
+  "sync"
   )
 
 func pixelToCoordY(prm Params, p int) *big.Float {
@@ -43,8 +44,9 @@ type resultColumn struct {
   Data []int
 }
 
-func worker(out chan<- resultColumn, in <-chan computeColumn) {
-  for task := range in {
+func worker(wg *sync.WaitGroup, results chan<- resultColumn, tasks <-chan computeColumn) {
+  defer wg.Done()
+  for task := range tasks {
     col := make([]int, task.Prm.Height)
     for py := 0; py < task.Prm.Height; py++ {
       y := pixelToCoordY(task.Prm, py)
@@ -53,14 +55,14 @@ func worker(out chan<- resultColumn, in <-chan computeColumn) {
       z.Imag = y
       col[py] = mandelbrot(z, task.Prm)
     }
-    out <- resultColumn{task.Px, col}
+    results <- resultColumn{task.Px, col}
   }
-  close(out)
 }
 
 func GenerateResult(prm Params) *Result {
   tasks := make(chan computeColumn)
   results := make(chan resultColumn)
+  wg := new(sync.WaitGroup)
 
   // set up all the computation tasks
   go func() {
@@ -71,20 +73,29 @@ func GenerateResult(prm Params) *Result {
     close(tasks)
   }()
 
-  // launch all the computation threads
+  // launch all the computation workers
   for th := 0; th < prm.Threads; th++ {
-    go worker(results, tasks)
+    wg.Add(1)
+    go worker(wg, results, tasks)
   }
 
-  // aggregate all results in a new Result object
+  // launch result aggregation thread
   r := new(Result)
   r.Width = prm.Width
   r.Height = prm.Height
   r.Iterations = prm.Iterations
   r.Data = make([][]int, prm.Width)
-  for colResult := range results {
-    r.Data[colResult.Px] = colResult.Data
-  }
+  go func() {
+    for colResult := range results {
+      r.Data[colResult.Px] = colResult.Data
+    }
+  }()
+
+  // wait for workers to finish
+  wg.Wait()
+
+  // allows result aggregation to finish (not strictly necessary)
+  close(results)
 
   return r
 }

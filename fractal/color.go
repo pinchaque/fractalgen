@@ -9,10 +9,9 @@ import (
 
 
 func CreateRGBA(r *Result) *image.RGBA {
-
   img := image.NewRGBA(image.Rect(0, 0, r.Width, r.Height))
-  for y := 0; y < r.Height; y++ {
-    for x := 0; x < r.Width; x++ {
+  for x := 0; x < r.Width; x++ {
+    for y := 0; y < r.Height; y++ {
       img.Set(x, y, pixelColor(r.Data[x][y]))
     }
   }

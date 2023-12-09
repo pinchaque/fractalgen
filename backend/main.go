@@ -13,6 +13,7 @@ import (
 
 
 func main() {
+  log.Printf("Starting up...")
   http.HandleFunc("/", handler)
   log.Fatal(http.ListenAndServe("localhost:8000", nil))
 }
@@ -47,7 +48,7 @@ func getInt(r *http.Request, str string, dflt int) int {
 
 func getParams(r *http.Request) fractal.Params {
   var prm fractal.Params
-  prm.Threads = 2
+  prm.Threads = 4
   prm.XMin = getBigFloat(r, "xmin", big.NewFloat(-2.0))
   prm.XMax = getBigFloat(r, "xmax", big.NewFloat(2.0))
   prm.YMin = getBigFloat(r, "ymin", big.NewFloat(-2.0))

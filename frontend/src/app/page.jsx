@@ -1,7 +1,7 @@
-import Image from 'next/image'
+import Fractal from 'components/fractal';
 
 export default function Home() {
   return (
-    <p>Hello World</p>
+    <Fractal />
   )
 }

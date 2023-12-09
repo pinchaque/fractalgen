@@ -1,13 +1,11 @@
 import { useState } from 'react';
 
-export default function Fractal() {
+export default function Fractal(width, height) {
 
   const [yMin, setYMin] = useState(-2.0);
   const [yMax, setYMax] = useState(2.0);
   const [xMin, setXMin] = useState(-2.0);
   const [xMax, setXMax] = useState(2.0);
-  const [width, setWidth] = useState(512);
-  const [height, setHeight] = useState(512);
   const [iterations, setIterations] = useState(200);
   const [escape, setEscape] = useState(2.0);
 

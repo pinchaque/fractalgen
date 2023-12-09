@@ -1,6 +1,15 @@
-import { useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 
-export default function Fractal(width, height) {
+export default function Fractal() {
+
+  const ref = useRef(null);
+
+  useLayoutEffect(() => {
+    setWidth(ref.current.clientWidth);
+    setHeight(ref.current.clientHeight);
+
+    console.log("Updated fractal dims: " + width + ", " + height);
+  }, []);
 
   const [yMin, setYMin] = useState(-2.0);
   const [yMax, setYMax] = useState(2.0);
@@ -8,6 +17,8 @@ export default function Fractal(width, height) {
   const [xMax, setXMax] = useState(2.0);
   const [iterations, setIterations] = useState(200);
   const [escape, setEscape] = useState(2.0);
+  const [width, setWidth] = useState(0);
+  const [height, setHeight] = useState(0);
 
   function handleClick() {
     setValue('X');
@@ -28,10 +39,12 @@ export default function Fractal(width, height) {
   }
 
   return (
-    <img
-      className="fractal"
-      src={url()}
-      alt="Fractal rendering"
-    />
+    <div ref={ref} className="fractal">
+      <img
+        className="fractal"
+        src={url()}
+        alt="Fractal rendering"
+      />
+    </div>
   );
 }

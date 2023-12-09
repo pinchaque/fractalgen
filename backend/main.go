@@ -64,6 +64,14 @@ func handler(w http.ResponseWriter, r *http.Request) {
   prm := getParams(r)
   start := time.Now()
 
+  log.Printf("Starting render of (%s, %s) - (%s, %s) size %dx%d ...",
+    prm.XMin.String(),
+    prm.YMin.String(),
+    prm.XMax.String(),
+    prm.YMax.String(),
+    prm.Width,
+    prm.Height)
+
   result := fractal.GenerateResult(prm)
   buffer := fractal.CreatePNG(fractal.CreateRGBA(result))
 
@@ -73,10 +81,12 @@ func handler(w http.ResponseWriter, r *http.Request) {
     log.Println("unable to write image.")
   }
   elapsed := time.Since(start)
-  log.Printf("(%s, %s) - (%s, %s) %dms",
+  log.Printf("(%s, %s) - (%s, %s) size %dx%d elapsed %dms",
     prm.XMin.String(),
     prm.YMin.String(),
     prm.XMax.String(),
     prm.YMax.String(),
+    prm.Width,
+    prm.Height,
     elapsed.Milliseconds())
 }

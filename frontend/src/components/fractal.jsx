@@ -1,14 +1,28 @@
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 export default function Fractal() {
 
   const ref = useRef(null);
 
+  const [numbers, setNumbers] = useState([]);
+
   useLayoutEffect(() => {
     setWidth(ref.current.clientWidth);
     setHeight(ref.current.clientHeight);
-
     console.log("Updated fractal dims: " + width + ", " + height);
+  }, [numbers]);
+
+  useEffect(() => {
+    function handleWindowResize() {
+      setWidth(ref.current.clientWidth);
+      setHeight(ref.current.clientHeight);
+    }
+
+    window.addEventListener('resize', handleWindowResize);
+
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
   }, []);
 
   const [yMin, setYMin] = useState(-2.0);
@@ -19,10 +33,6 @@ export default function Fractal() {
   const [escape, setEscape] = useState(2.0);
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
-
-  function handleClick() {
-    setValue('X');
-  }
 
   function url() {
     const u = new URL("http://localhost:8000");

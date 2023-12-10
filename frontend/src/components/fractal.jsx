@@ -5,23 +5,73 @@ export default function Fractal() {
   const ref = useRef(null);
   const [numbers, setNumbers] = useState([]);
 
-  useLayoutEffect(() => {
+  // Fractal parameters that we pass to the backend
+  const [yMin, setYMin] = useState(-2.0);
+  const [yMax, setYMax] = useState(2.0);
+  const [xMin, setXMin] = useState(-2.0);
+  const [xMax, setXMax] = useState(2.0);
+  const [iterations, setIterations] = useState(200);
+  const [escape, setEscape] = useState(2.0);
+  const [width, setWidth] = useState(0);
+  const [height, setHeight] = useState(0);
+
+  function recomputeCoords(oldW, oldH, newW, newH) {
+    if (!((oldW > 0) && (oldH > 0) && (newW > 0) && (newH > 0))) {
+      return;
+    }
+
+    // aspect ratios: width/height
+    const oldAspect = oldW / oldH;
+    const newAspect = newW / newH;
+
+    const ratioH = newH / oldH;
+    const ratioW = newW / oldW;
+
+    console.log("(" + oldW + ", " + oldH + ") -> (" + newW + ", " + newH + ")");
+    console.log("ratioH: " + ratioH);
+    console.log("ratioW: " + ratioW);
+    console.log("oldAspect: " + oldAspect);
+    console.log("newAspect: " + newAspect);
+
+    // New window is wider. That means we keep the same height and expand
+    // the image coordinates horizontally.
+    if (oldAspect < newAspect) {
+        // how much to expand? 
+
+    }
+    // New window is taller. That means we keep the same width and expand
+    // the image coordinates vertically.
+    else if (oldAspect > newAspect) {
+    }
+  }
+
+  // Set new fractal width and height based on current window size
+  // If this is a resize (we have an existing width and height) then we
+  // maintain the same aspect ratio.
+  function handleWindowResize() {
+    console.log("X1 Updated fractal dims: " + width + ", " + height);
+    console.log("X1 xmin:" + xMin);
+    // if we have existing dimensions
+    if ((width > 0) && (height > 0)) {
+      recomputeCoords(
+        width, height, 
+        ref.current.clientWidth, ref.current.clientHeight);
+    }
     setWidth(ref.current.clientWidth);
     setHeight(ref.current.clientHeight);
-    console.log("Updated fractal dims: " + width + ", " + height);
+  }
+
+  // Handle initial layout
+  useLayoutEffect(() => {
+    handleWindowResize();
   }, [numbers]);
 
+  // Handle window resizing
   useEffect(() => {
     let timeout = false;
     let delay = 250;
 
-    function handleWindowResize() {
-      setWidth(ref.current.clientWidth);
-      setHeight(ref.current.clientHeight);
-    }
-
     function debouncedWindowResize() {
-      console.log("XX called debouncedWR timeout:" + timeout + " delay:" + delay)
       clearTimeout(timeout);
       timeout = setTimeout(handleWindowResize, delay);
     }
@@ -33,15 +83,7 @@ export default function Fractal() {
     };
   }, []);
 
-  const [yMin, setYMin] = useState(-2.0);
-  const [yMax, setYMax] = useState(2.0);
-  const [xMin, setXMin] = useState(-2.0);
-  const [xMax, setXMax] = useState(2.0);
-  const [iterations, setIterations] = useState(200);
-  const [escape, setEscape] = useState(2.0);
-  const [width, setWidth] = useState(0);
-  const [height, setHeight] = useState(0);
-
+  // URL to generate the fractal image
   function url() {
     const u = new URL("http://localhost:8000");
     u.searchParams.append("xmin", xMin);

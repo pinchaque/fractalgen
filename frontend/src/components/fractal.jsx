@@ -3,7 +3,6 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 export default function Fractal() {
 
   const ref = useRef(null);
-
   const [numbers, setNumbers] = useState([]);
 
   useLayoutEffect(() => {
@@ -13,15 +12,24 @@ export default function Fractal() {
   }, [numbers]);
 
   useEffect(() => {
+    let timeout = false;
+    let delay = 250;
+
     function handleWindowResize() {
       setWidth(ref.current.clientWidth);
       setHeight(ref.current.clientHeight);
     }
 
-    window.addEventListener('resize', handleWindowResize);
+    function debouncedWindowResize() {
+      console.log("XX called debouncedWR timeout:" + timeout + " delay:" + delay)
+      clearTimeout(timeout);
+      timeout = setTimeout(handleWindowResize, delay);
+    }
+
+    window.addEventListener('resize', debouncedWindowResize);
 
     return () => {
-      window.removeEventListener('resize', handleWindowResize);
+      window.removeEventListener('resize', debouncedWindowResize);
     };
   }, []);
 

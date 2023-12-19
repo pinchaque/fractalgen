@@ -1,9 +1,9 @@
 'use client'
 
-import Fractal from 'components/fractal';
+import FractalWindow from 'components/fractalWindow';
 
 export default function Home() {
   return (
-    <Fractal />
+    <FractalWindow />
   )
 }

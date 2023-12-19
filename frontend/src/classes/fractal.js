@@ -1,11 +1,14 @@
 
-class Fractal {
+import Point from 'classes/point';
+
+export default class Fractal {
   #min = new Point(-2.0, -2.0);
   #max = new Point(2.0, 2.0);
   #iterations = 200;
   #escape = 2.0;
 
   constructor() {
+    this.#min = new Point(-2.0, -2.0);
   }
 
   get min() { return this.#min; }

@@ -1,20 +1,19 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import Fractal from 'classes/fractal';
+import ImageCanvas from 'classes/imageCanvas';
+import FractalStatus from 'components/fractalStatus';
+import FractalImage from 'components/fractalImage';
 
-export default function Fractal() {
+export default function FractalWindow() {
 
   const ref = useRef(null);
-  const [numbers, setNumbers] = useState([]);
+  //const [numbers, setNumbers] = useState([]);
 
   // Fractal parameters that we pass to the backend
-  const [yMin, setYMin] = useState(-2.0);
-  const [yMax, setYMax] = useState(2.0);
-  const [xMin, setXMin] = useState(-2.0);
-  const [xMax, setXMax] = useState(2.0);
-  const [iterations, setIterations] = useState(200);
-  const [escape, setEscape] = useState(2.0);
-  const [imgWidth, setImgWidth] = useState(0);
-  const [imgHeight, setImgHeight] = useState(0);
+  const [fractal, setFractal] = useState(new Fractal());
+  const [canvas, setCanvas] = useState(new ImageCanvas(512, 512));
 
+/*************8
   function recomputeCoords(oldW, oldH, newW, newH) {
     if (!((oldW > 0) && (oldH > 0) && (newW > 0) && (newH > 0))) {
       return;
@@ -66,6 +65,7 @@ export default function Fractal() {
     console.log("X2 imgHeight:" + imgHeight);
   }
 
+
   // Handle initial layout
   useLayoutEffect(() => {
     console.log("useLayoutEffect()");
@@ -90,31 +90,12 @@ export default function Fractal() {
       window.removeEventListener('resize', debouncedWindowResize);
     };
   }, []);
-
-  // URL to generate the fractal image
-  function url() {
-    const u = new URL("http://localhost:8000");
-    console.log("X3 imgWidth:" + imgWidth);
-    console.log("X3 imgHeight:" + imgHeight);
-    u.searchParams.append("xmin", xMin);
-    u.searchParams.append("xmax", xMax);
-    u.searchParams.append("ymin", yMin);
-    u.searchParams.append("ymax", yMax);
-    u.searchParams.append("width", imgWidth);
-    u.searchParams.append("height", imgHeight);
-    u.searchParams.append("iterations", iterations);
-    u.searchParams.append("escape", escape);
-    console.log(u.href);
-    return u.href
-  }
+  *************/
 
   return (
     <div ref={ref} className="fractal">
-      <img
-        className="fractal"
-        src={url()}
-        alt="Fractal rendering"
-      />
+      <FractalStatus fractal={fractal} canvas={canvas} />
+      <FractalImage fractal={fractal} canvas={canvas} />
     </div>
   );
 }

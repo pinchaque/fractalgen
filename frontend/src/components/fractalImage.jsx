@@ -1,38 +1,46 @@
 'use client'
+
 import { useEffect, useState } from 'react';
+import Point from 'classes/point';
 
 export default function FractalImage({ fractal, canvas }) {
 
-  const [globalMousePos, setGlobalMousePos] = useState({});
-  const [localMousePos, setLocalMousePos] = useState({});
+  //const [globalMousePos, setGlobalMousePos] = useState({});
+  //const [localMousePos, setLocalMousePos] = useState({});
+  const zoomRatio = 0.5;
   const [leftClickPos, setLeftClickPos] = useState({});
   const [rightClickPos, setRightClickPos] = useState({});
 
+  /*(
   const handleLocalMouseMove = (event) => {
     const localX = event.clientX - event.target.offsetLeft;
     const localY = event.clientY - event.target.offsetTop;
     setLocalMousePos({ x: localX, y: localY });
   };
+  */
+
+  // converts canvas event coordinates into fractal coordinates
+  function getEventCoords(e) {
+    // x axis is not inverted. Runs from 0 to (canvas.width-1)
+    const localX = event.clientX - event.target.offsetLeft;
+    const percX = (localX + 1) / canvas.width;
+    const pointX = fractal.min.x + ((fractal.max.x - fractal.min.x) * percX);
+
+    // y axis is inverted
+    const localY = event.clientY - event.target.offsetTop;
+    const percY = (canvas.height - localY - 1) / canvas.height;
+    const pointY = fractal.min.y + ((fractal.max.y - fractal.min.y) * percY);
+
+    return new Point(pointX, pointY);
+  }
 
   const handleLeftMouseClick = (event) => {
     if (event.shiftKey) {
-      setRightClickPos({ x: event.clientX, y: event.clientY, });
+      setRightClickPos(getEventCoords(event))
     } else {
-      setLeftClickPos({ x: event.clientX, y: event.clientY, });
+      setLeftClickPos(getEventCoords(event))
     }
   };
-
-  useEffect(() => {
-    const handleGlobalMouseMove = (event) => {
-      setGlobalMousePos({ x: event.clientX, y: event.clientY, });
-    };
-
-    window.addEventListener('mousemove', handleGlobalMouseMove);
-
-    return () => {
-      window.removeEventListener('mousemove', handleGlobalMouseMove);
-    };
-  }, []);
 
   // URL to generate the fractal image
   function url() {
@@ -55,11 +63,8 @@ export default function FractalImage({ fractal, canvas }) {
         className="fractal"
         src={url()}
         alt="Fractal rendering"
-        onMouseMove={handleLocalMouseMove}
         onClick={handleLeftMouseClick}
       />
-      <p>Global: <b>({globalMousePos.x}, {globalMousePos.y})</b></p>
-      <p>Local: <b>({localMousePos.x}, {localMousePos.y})</b></p>
       <p>Left Click: <b>({leftClickPos.x}, {leftClickPos.y})</b></p>
       <p>Right Click: <b>({rightClickPos.x}, {rightClickPos.y})</b></p>
     </div>

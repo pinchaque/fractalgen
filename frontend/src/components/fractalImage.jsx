@@ -5,12 +5,21 @@ export default function FractalImage({ fractal, canvas }) {
 
   const [globalMousePos, setGlobalMousePos] = useState({});
   const [localMousePos, setLocalMousePos] = useState({});
+  const [leftClickPos, setLeftClickPos] = useState({});
+  const [rightClickPos, setRightClickPos] = useState({});
 
   const handleLocalMouseMove = (event) => {
     const localX = event.clientX - event.target.offsetLeft;
     const localY = event.clientY - event.target.offsetTop;
-
     setLocalMousePos({ x: localX, y: localY });
+  };
+
+  const handleLeftMouseClick = (event) => {
+    if (event.shiftKey) {
+      setRightClickPos({ x: event.clientX, y: event.clientY, });
+    } else {
+      setLeftClickPos({ x: event.clientX, y: event.clientY, });
+    }
   };
 
   useEffect(() => {
@@ -21,10 +30,7 @@ export default function FractalImage({ fractal, canvas }) {
     window.addEventListener('mousemove', handleGlobalMouseMove);
 
     return () => {
-      window.removeEventListener(
-        'mousemove',
-        handleGlobalMouseMove
-      );
+      window.removeEventListener('mousemove', handleGlobalMouseMove);
     };
   }, []);
 
@@ -50,9 +56,12 @@ export default function FractalImage({ fractal, canvas }) {
         src={url()}
         alt="Fractal rendering"
         onMouseMove={handleLocalMouseMove}
+        onClick={handleLeftMouseClick}
       />
       <p>Global: <b>({globalMousePos.x}, {globalMousePos.y})</b></p>
       <p>Local: <b>({localMousePos.x}, {localMousePos.y})</b></p>
+      <p>Left Click: <b>({leftClickPos.x}, {leftClickPos.y})</b></p>
+      <p>Right Click: <b>({rightClickPos.x}, {rightClickPos.y})</b></p>
     </div>
   );
 }

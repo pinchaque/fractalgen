@@ -8,7 +8,6 @@ export default class Fractal {
   #escape = 2.0;
 
   constructor() {
-    this.#min = new Point(-2.0, -2.0);
   }
 
   get min() { return this.#min; }
@@ -25,4 +24,8 @@ export default class Fractal {
     this.#min = min;
     this.#max = max;
   }
+
+  getXRange() { return this.#max.x - this.#min.x; }
+
+  getYRange() { return this.#max.y - this.#min.y; }
 }

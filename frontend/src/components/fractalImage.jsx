@@ -2,14 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import Point from 'classes/point';
+import Fractal from 'classes/fractal';
 
-export default function FractalImage({ fractal, canvas }) {
+export default function FractalImage({ fractal, canvas, handleZoom }) {
 
   //const [globalMousePos, setGlobalMousePos] = useState({});
   //const [localMousePos, setLocalMousePos] = useState({});
   const zoomRatio = 0.5;
-  const [leftClickPos, setLeftClickPos] = useState({});
-  const [rightClickPos, setRightClickPos] = useState({});
+  const [clickPos, setClickPos] = useState({});
 
   /*(
   const handleLocalMouseMove = (event) => {
@@ -34,12 +34,27 @@ export default function FractalImage({ fractal, canvas }) {
     return new Point(pointX, pointY);
   }
 
-  const handleLeftMouseClick = (event) => {
-    if (event.shiftKey) {
-      setRightClickPos(getEventCoords(event))
-    } else {
-      setLeftClickPos(getEventCoords(event))
-    }
+  const handleClick = (event) => {
+    // new image center is where user clicked
+    const c = getEventCoords(event);
+    setClickPos(c);
+
+    // zoom in/out based on shift key
+    const zoomFactor = event.shiftKey ? (1.0 / zoomRatio) : zoomRatio;
+
+    // new X and Y ranges based on zoom factor
+    const xRange = fractal.getXRange() * zoomFactor;
+    const yRange = fractal.getYRange() * zoomFactor;
+
+    // create our new zoomed and recentered fractal
+    const f = new Fractal();
+    f.iterations = fractal.iterations;
+    f.escape = fractal.escape;
+    f.min = new Point(c.x - (xRange / 2.0), c.y - (yRange / 2.0));
+    f.max = new Point(c.x + (xRange / 2.0), c.y + (yRange / 2.0));
+
+    // tell parent to render it
+    handleZoom(f);
   };
 
   // URL to generate the fractal image
@@ -63,10 +78,9 @@ export default function FractalImage({ fractal, canvas }) {
         className="fractal"
         src={url()}
         alt="Fractal rendering"
-        onClick={handleLeftMouseClick}
+        onClick={handleClick}
       />
-      <p>Left Click: <b>({leftClickPos.x}, {leftClickPos.y})</b></p>
-      <p>Right Click: <b>({rightClickPos.x}, {rightClickPos.y})</b></p>
+      <p>Click: <b>({clickPos.x}, {clickPos.y})</b></p>
     </div>
   );
 }

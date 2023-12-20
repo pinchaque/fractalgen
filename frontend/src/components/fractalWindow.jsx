@@ -13,6 +13,10 @@ export default function FractalWindow() {
   const [fractal, setFractal] = useState(new Fractal());
   const [canvas, setCanvas] = useState(new ImageCanvas(512, 512));
 
+  function handleZoom(f) {
+    setFractal(f);
+  }
+
 /*************8
   function recomputeCoords(oldW, oldH, newW, newH) {
     if (!((oldW > 0) && (oldH > 0) && (newW > 0) && (newH > 0))) {
@@ -95,7 +99,7 @@ export default function FractalWindow() {
   return (
     <div ref={ref} className="fractal">
       <FractalStatus fractal={fractal} canvas={canvas} />
-      <FractalImage fractal={fractal} canvas={canvas} />
+      <FractalImage fractal={fractal} canvas={canvas} onZoom={handleZoom} />
     </div>
   );
 }

@@ -1,6 +1,32 @@
-//import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+'use client'
+import { useEffect, useState } from 'react';
 
 export default function FractalImage({ fractal, canvas }) {
+
+  const [globalMousePos, setGlobalMousePos] = useState({});
+  const [localMousePos, setLocalMousePos] = useState({});
+
+  const handleLocalMouseMove = (event) => {
+    const localX = event.clientX - event.target.offsetLeft;
+    const localY = event.clientY - event.target.offsetTop;
+
+    setLocalMousePos({ x: localX, y: localY });
+  };
+
+  useEffect(() => {
+    const handleGlobalMouseMove = (event) => {
+      setGlobalMousePos({ x: event.clientX, y: event.clientY, });
+    };
+
+    window.addEventListener('mousemove', handleGlobalMouseMove);
+
+    return () => {
+      window.removeEventListener(
+        'mousemove',
+        handleGlobalMouseMove
+      );
+    };
+  }, []);
 
   // URL to generate the fractal image
   function url() {
@@ -23,7 +49,10 @@ export default function FractalImage({ fractal, canvas }) {
         className="fractal"
         src={url()}
         alt="Fractal rendering"
+        onMouseMove={handleLocalMouseMove}
       />
+      <p>Global: <b>({globalMousePos.x}, {globalMousePos.y})</b></p>
+      <p>Local: <b>({localMousePos.x}, {localMousePos.y})</b></p>
     </div>
   );
 }

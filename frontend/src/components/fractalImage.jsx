@@ -1,15 +1,18 @@
 'use client'
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Point from 'classes/point';
 import Fractal from 'classes/fractal';
+import ImageCanvas from 'classes/imageCanvas';
 
-export default function FractalImage({ fractal, canvas, onZoom }) {
+export default function FractalImage({ fractal, onZoom }) {
 
+  const ref = useRef(null);
   //const [globalMousePos, setGlobalMousePos] = useState({});
   //const [localMousePos, setLocalMousePos] = useState({});
   const zoomRatio = 0.5;
   const [clickPos, setClickPos] = useState({});
+  const [canvas, setCanvas] = useState(new ImageCanvas(512, 512));
 
   /*(
   const handleLocalMouseMove = (event) => {
@@ -57,6 +60,65 @@ export default function FractalImage({ fractal, canvas, onZoom }) {
     onZoom(f);
   };
 
+/*
+  function recomputeCoords(oldW, oldH, newW, newH) {
+    if (!((oldW > 0) && (oldH > 0) && (newW > 0) && (newH > 0))) {
+      return;
+    }
+
+    // aspect ratios: width/height
+    const oldAspect = oldW / oldH;
+    const newAspect = newW / newH;
+
+    const ratioH = newH / oldH;
+    const ratioW = newW / oldW;
+
+    // New window is wider. That means we keep the same height and expand
+    // the image coordinates horizontally.
+    if (oldAspect < newAspect) {
+        // how much to expand? 
+
+    }
+    // New window is taller. That means we keep the same width and expand
+    // the image coordinates vertically.
+    else if (oldAspect > newAspect) {
+    }
+  }
+  */
+
+  // Set new fractal width and height based on current window size
+  // If this is a resize (we have an existing width and height) then we
+  // maintain the same aspect ratio.
+  function handleWindowResize() {
+    // if we have existing dimensions
+    if ((canvas.width > 0) && (canvas.height > 0)) {
+      /*
+      recomputeCoords(
+        canvas.width, canvas.height,
+        ref.current.clientWidth, ref.current.clientHeight);
+      */
+    }
+    canvas.width = (ref.current.offsetWidth);
+    canvas.height = (ref.current.offsetHeight);
+  }
+
+  // Handle window resizing
+  useEffect(() => {
+    let timeout = false;
+    let delay = 250;
+
+    function debouncedWindowResize() {
+      clearTimeout(timeout);
+      timeout = setTimeout(handleWindowResize, delay);
+    }
+
+    window.addEventListener('resize', debouncedWindowResize);
+
+    return () => {
+      window.removeEventListener('resize', debouncedWindowResize);
+    };
+  }, []);
+
   // URL to generate the fractal image
   function url() {
     const u = new URL("http://localhost:8000");
@@ -73,14 +135,13 @@ export default function FractalImage({ fractal, canvas, onZoom }) {
   }
 
   return (
-    <div className="fractalImg">
+    <div ref={ref} className="fractalImg">
       <img
         className="fractal"
         src={url()}
         alt="Fractal rendering"
         onClick={handleClick}
       />
-      <p>Click: <b>({clickPos.x}, {clickPos.y})</b></p>
     </div>
   );
 }

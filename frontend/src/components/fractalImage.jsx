@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Point from 'classes/point';
 import Fractal from 'classes/fractal';
 
-export default function FractalImage({ fractal, canvas, handleZoom }) {
+export default function FractalImage({ fractal, canvas, onZoom }) {
 
   //const [globalMousePos, setGlobalMousePos] = useState({});
   //const [localMousePos, setLocalMousePos] = useState({});
@@ -53,8 +53,8 @@ export default function FractalImage({ fractal, canvas, handleZoom }) {
     f.min = new Point(c.x - (xRange / 2.0), c.y - (yRange / 2.0));
     f.max = new Point(c.x + (xRange / 2.0), c.y + (yRange / 2.0));
 
-    // tell parent to render it
-    handleZoom(f);
+    // tell parent to render the fractal
+    onZoom(f);
   };
 
   // URL to generate the fractal image

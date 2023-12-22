@@ -13,7 +13,7 @@ export default function FractalWindow() {
   const [fractal, setFractal] = useState(new Fractal());
   const [canvas, setCanvas] = useState(new ImageCanvas(512, 512));
 
-  function handleZoom(f) {
+  const handleZoom = (f) => {
     setFractal(f);
   }
 

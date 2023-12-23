@@ -15,6 +15,7 @@ export default function FractalImage({ fractal, onZoom }) {
   const [clickPos, setClickPos] = useState({});
   const [canvas, setCanvas] = useState(new ImageCanvas(512, 512));
 
+
   /*(
   const handleLocalMouseMove = (event) => {
     const localX = event.clientX - event.target.offsetLeft;
@@ -99,8 +100,9 @@ export default function FractalImage({ fractal, onZoom }) {
         ref.current.clientWidth, ref.current.clientHeight);
       */
     }
-    canvas.width = (ref.current.offsetWidth);
-    canvas.height = (ref.current.offsetHeight);
+    setCanvas(new ImageCanvas(
+        ref.current.offsetWidth, 
+        ref.current.offsetHeight));
   }
 
   // Handle window resizing
@@ -131,7 +133,6 @@ export default function FractalImage({ fractal, onZoom }) {
     u.searchParams.append("height", canvas.height);
     u.searchParams.append("iterations", fractal.iterations);
     u.searchParams.append("escape", fractal.escape);
-    console.log(u.href);
     return u.href
   }
 

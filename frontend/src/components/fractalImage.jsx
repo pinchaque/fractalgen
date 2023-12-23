@@ -29,12 +29,12 @@ export default function FractalImage({ fractal, onZoom }) {
     // x axis is not inverted. Runs from 0 to (canvas.width-1)
     const localX = event.clientX - event.target.offsetLeft;
     const percX = (localX + 1) / canvas.width;
-    const pointX = fractal.min.x + ((fractal.max.x - fractal.min.x) * percX);
+    const pointX = fractal.min.x + (fractal.width * percX);
 
     // y axis is inverted
     const localY = event.clientY - event.target.offsetTop;
     const percY = (canvas.height - localY - 1) / canvas.height;
-    const pointY = fractal.min.y + ((fractal.max.y - fractal.min.y) * percY);
+    const pointY = fractal.min.y + (fractal.height * percY);
 
     return new Point(pointX, pointY);
   }
@@ -47,16 +47,13 @@ export default function FractalImage({ fractal, onZoom }) {
     // zoom in/out based on shift key
     const zoomFactor = event.shiftKey ? zoomOutRatio : zoomInRatio;
 
-    // new X and Y ranges based on zoom factor
-    const xRange = fractal.getXRange() * zoomFactor;
-    const yRange = fractal.getYRange() * zoomFactor;
-
     // create our new zoomed and recentered fractal
     const f = new Fractal();
     f.iterations = fractal.iterations;
     f.escape = fractal.escape;
-    f.min = new Point(c.x - (xRange / 2.0), c.y - (yRange / 2.0));
-    f.max = new Point(c.x + (xRange / 2.0), c.y + (yRange / 2.0));
+    f.center = c;
+    f.width = fractal.width * zoomFactor;
+    f.height = fractal.height * zoomFactor;
 
     // tell parent to render the fractal
     onZoom(f);

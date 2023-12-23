@@ -2,8 +2,8 @@
 import Point from 'classes/point';
 
 export default class Fractal {
-  #min = new Point(-2.0, -2.0);
-  #max = new Point(2.0, 2.0);
+  #min = new Point(-2.0, -1.25);
+  #max = new Point(0.5, 1.25);
   #iterations = 200;
   #escape = 2.0;
 

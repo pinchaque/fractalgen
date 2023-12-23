@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Point from 'classes/point';
 import Fractal from 'classes/fractal';
 import ImageCanvas from 'classes/imageCanvas';
@@ -13,7 +13,7 @@ export default function FractalImage({ fractal, onZoom }) {
   const zoomInRatio = 0.25;
   const zoomOutRatio = 2.0;
   const [clickPos, setClickPos] = useState({});
-  const [canvas, setCanvas] = useState(new ImageCanvas(512, 512));
+  const [canvas, setCanvas] = useState(new ImageCanvas(1, 1));
 
 
   /*(
@@ -105,10 +105,10 @@ export default function FractalImage({ fractal, onZoom }) {
         ref.current.offsetHeight));
   }
 
-  // Handle window resizing
+  // Handle window resizing after initial render
   useEffect(() => {
     let timeout = false;
-    let delay = 250;
+    let delay = 500;
 
     function debouncedWindowResize() {
       clearTimeout(timeout);
@@ -121,6 +121,14 @@ export default function FractalImage({ fractal, onZoom }) {
       window.removeEventListener('resize', debouncedWindowResize);
     };
   }, []);
+
+  // set initial canvas to be window size before render
+  useLayoutEffect(() => {
+    setCanvas(new ImageCanvas(
+        ref.current.offsetWidth, 
+        ref.current.offsetHeight));
+  }, []);
+
 
   // URL to generate the fractal image
   function url() {

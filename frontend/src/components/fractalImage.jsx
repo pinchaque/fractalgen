@@ -10,7 +10,8 @@ export default function FractalImage({ fractal, onZoom }) {
   const ref = useRef(null);
   //const [globalMousePos, setGlobalMousePos] = useState({});
   //const [localMousePos, setLocalMousePos] = useState({});
-  const zoomRatio = 0.5;
+  const zoomInRatio = 0.25;
+  const zoomOutRatio = 2.0;
   const [clickPos, setClickPos] = useState({});
   const [canvas, setCanvas] = useState(new ImageCanvas(512, 512));
 
@@ -43,7 +44,7 @@ export default function FractalImage({ fractal, onZoom }) {
     setClickPos(c);
 
     // zoom in/out based on shift key
-    const zoomFactor = event.shiftKey ? (1.0 / zoomRatio) : zoomRatio;
+    const zoomFactor = event.shiftKey ? zoomOutRatio : zoomInRatio;
 
     // new X and Y ranges based on zoom factor
     const xRange = fractal.getXRange() * zoomFactor;

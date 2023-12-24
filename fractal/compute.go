@@ -5,32 +5,47 @@ import (
   "sync"
   )
 
-func pixelToCoordY(prm Params, p int) *big.Float {
-  //y := float64(height - py - 1) / float64(height) * (ymax - ymin) + ymin
-  ymin := prm.YMin
-  ymax := prm.YMax
-  height := prm.Height
-  yrange := new(big.Float).Sub(ymax, ymin)
+func pixelToCoord(
+  pixel_idx int, 
+  num_pixels int, 
+  coord_center *big.Float, 
+  coord_size *big.Float) *big.Float {
 
-  y := new(big.Float)
-  y.Quo(big.NewFloat(float64(height - p - 1)), big.NewFloat(float64(height)))
-  y.Mul(y, yrange)
-  y.Add(y, ymin)
-  return y
+  // how much of the coordinate space each pixel represents
+  size_per_pixel := new(big.Float)
+  size_per_pixel.Quo(coord_size, big.NewFloat(float64(num_pixels)))
+
+  // coord offset within a pixel so that the return value is actually at the 
+  // center of the pixel not at the start
+  coord_offset := new(big.Float)
+  coord_offset.Quo(size_per_pixel, big.NewFloat(float64(2.0)))
+
+  // % of way through the pixels. Note that this won't hit 100% since pixel_idx
+  // goes from 0 to num_pixels-1
+  perc := new(big.Float)
+  perc.Quo(big.NewFloat(float64(pixel_idx)), big.NewFloat(float64(num_pixels)))
+
+  // coordinate of 0'th pixel
+  coord_min := new(big.Float)
+  coord_min.Add(coord_min, coord_size)
+  coord_min.Quo(coord_min, big.NewFloat(float64(2.0))) // half range
+  coord_min.Sub(coord_center, coord_min) // subtract from center
+  coord_min.Add(coord_min, coord_offset) // middle of pixel
+
+  // calc return value as % of way through pixels x overall size
+  coord := new(big.Float)
+  coord.Mul(perc, coord_size)
+  coord.Add(coord, coord_min)
+
+  return coord
+}
+
+func pixelToCoordY(prm Params, p int) *big.Float {
+  return pixelToCoord(prm.Height - p - 1, prm.Height, prm.Y, prm.YRange)
 }
 
 func pixelToCoordX(prm Params, p int) *big.Float {
-  // x := float64(px) / float64(width) * (xmax - xmin) + xmin
-  xmin := prm.XMin
-  xmax := prm.XMax
-  width := prm.Width
-  xrange := new(big.Float).Sub(xmax, xmin)
-
-  x := new(big.Float)
-  x.Quo(big.NewFloat(float64(p)), big.NewFloat(float64(width)))
-  x.Mul(x, xrange)
-  x.Add(x, xmin)
-  return x
+  return pixelToCoord(p, prm.Width, prm.X, prm.XRange)
 }
 
 type computeColumn struct {
@@ -44,7 +59,11 @@ type resultColumn struct {
   Data []int
 }
 
-func worker(wg *sync.WaitGroup, results chan<- resultColumn, tasks <-chan computeColumn) {
+func worker(
+  id int,
+  wg *sync.WaitGroup, 
+  results chan<- resultColumn, 
+  tasks <-chan computeColumn) {
   defer wg.Done()
   for task := range tasks {
     col := make([]int, task.Prm.Height)
@@ -62,7 +81,6 @@ func worker(wg *sync.WaitGroup, results chan<- resultColumn, tasks <-chan comput
 func GenerateResult(prm Params) *Result {
   tasks := make(chan computeColumn)
   results := make(chan resultColumn)
-  wg := new(sync.WaitGroup)
 
   // set up all the computation tasks
   go func() {
@@ -73,29 +91,36 @@ func GenerateResult(prm Params) *Result {
     close(tasks)
   }()
 
-  // launch all the computation workers
-  for th := 0; th < prm.Threads; th++ {
-    wg.Add(1)
-    go worker(wg, results, tasks)
-  }
-
   // launch result aggregation thread
   r := new(Result)
   r.Width = prm.Width
   r.Height = prm.Height
   r.Iterations = prm.Iterations
   r.Data = make([][]int, prm.Width)
+  wg_agg := new(sync.WaitGroup)
+  wg_agg.Add(1)
   go func() {
+    defer wg_agg.Done()
     for colResult := range results {
       r.Data[colResult.Px] = colResult.Data
     }
   }()
 
-  // wait for workers to finish
-  wg.Wait()
+  // launch all the computation workers
+  wg_workers := new(sync.WaitGroup)
+  for th := 0; th < prm.Threads; th++ {
+    wg_workers.Add(1)
+    go worker(th, wg_workers, results, tasks)
+  }
 
-  // allows result aggregation to finish (not strictly necessary)
+  // wait for workers to finish
+  wg_workers.Wait()
+
+  // allows result aggregation to finish
   close(results)
+
+  // wait for aggregation to finish
+  wg_agg.Wait()
 
   return r
 }

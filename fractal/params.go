@@ -5,10 +5,10 @@ import (
 )
 
 type Params struct {
-  XMin        *big.Float
-  XMax        *big.Float
-  YMin        *big.Float
-  YMax        *big.Float
+  X           *big.Float
+  Y           *big.Float
+  XRange      *big.Float
+  YRange      *big.Float
   Width       int
   Height      int
   Iterations  int

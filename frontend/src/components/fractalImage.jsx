@@ -59,9 +59,18 @@ export default function FractalImage({ fractal, onZoom }) {
     onZoom(f);
   };
 
-/*
-  function recomputeCoords(oldW, oldH, newW, newH) {
+  function adjustFractal(oldW, oldH, newW, newH) {
+
+    // duplicate existing fractal
+    const f = new Fractal();
+    f.iterations = fractal.iterations;
+    f.escape = fractal.escape;
+    f.center = fractal.center;
+    f.width = fractal.width;
+    f.height = fractal.height;
+
     if (!((oldW > 0) && (oldH > 0) && (newW > 0) && (newH > 0))) {
+      // invalid dimensions => no changes
       return;
     }
 
@@ -75,15 +84,20 @@ export default function FractalImage({ fractal, onZoom }) {
     // New window is wider. That means we keep the same height and expand
     // the image coordinates horizontally.
     if (oldAspect < newAspect) {
-        // how much to expand? 
-
+      f.width *= (ratioW / ratioH);
+      onZoom(f);
     }
     // New window is taller. That means we keep the same width and expand
     // the image coordinates vertically.
     else if (oldAspect > newAspect) {
+      f.height *= (ratioH / ratioW);
+      onZoom(f);
+    }
+    else {
+      // same aspect ratio - no change
+      return;
     }
   }
-  */
 
   // Set new fractal width and height based on current window size
   // If this is a resize (we have an existing width and height) then we
@@ -91,11 +105,9 @@ export default function FractalImage({ fractal, onZoom }) {
   function handleWindowResize() {
     // if we have existing dimensions
     if ((canvas.width > 0) && (canvas.height > 0)) {
-      /*
-      recomputeCoords(
+      adjustFractal(
         canvas.width, canvas.height,
-        ref.current.clientWidth, ref.current.clientHeight);
-      */
+        ref.current.offsetWidth, ref.current.offsetHeight);
     }
     setCanvas(new ImageCanvas(
         ref.current.offsetWidth, 

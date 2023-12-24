@@ -130,10 +130,10 @@ export default function FractalImage({ fractal, onZoom }) {
   // URL to generate the fractal image
   function url() {
     const u = new URL("http://localhost:8000");
-    u.searchParams.append("xmin", fractal.min.x);
-    u.searchParams.append("xmax", fractal.max.x);
-    u.searchParams.append("ymin", fractal.min.y);
-    u.searchParams.append("ymax", fractal.max.y);
+    u.searchParams.append("x", fractal.center.x);
+    u.searchParams.append("y", fractal.center.y);
+    u.searchParams.append("xrange", fractal.width);
+    u.searchParams.append("yrange", fractal.height);
     u.searchParams.append("width", canvas.width);
     u.searchParams.append("height", canvas.height);
     u.searchParams.append("iterations", fractal.iterations);

@@ -2,30 +2,37 @@
 import Point from 'classes/point';
 
 export default class Fractal {
-  #min = new Point(-2.0, -1.25);
-  #max = new Point(0.5, 1.25);
+  #center = new Point(-0.75, 0.00);
+  #width = 2.50;
+  #height = 2.50;
   #iterations = 200;
   #escape = 2.0;
 
   constructor() {
   }
 
-  get min() { return this.#min; }
-  get max() { return this.#max; }
+  get center() { return this.#center; }
+  get width() { return this.#width; }
+  get height() { return this.#height; }
   get iterations() { return this.#iterations; }
   get escape() { return this.#escape; }
 
-  set min(x) { this.#min = x; }
-  set max(x) { this.#max = x; }
+  set center(x) { this.#center = x; }
+  set width(x) { this.#width = x; }
+  set height(x) { this.#height = x; }
   set iterations(x) { this.#iterations = x; }
   set escape(x) { this.#escape = x; }
 
-  setBounds(min, max) {
-    this.#min = min;
-    this.#max = max;
+
+  get min() {
+    return new Point(
+        this.#center.x - (this.#width / 2.0),
+        this.#center.y - (this.#height / 2.0));
   }
 
-  getXRange() { return this.#max.x - this.#min.x; }
-
-  getYRange() { return this.#max.y - this.#min.y; }
+  get max() {
+    return new Point(
+        this.#center.x + (this.#width / 2.0),
+        this.#center.y + (this.#height / 2.0));
+  }
 }

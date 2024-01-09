@@ -49,10 +49,10 @@ func getInt(r *http.Request, str string, dflt int) int {
 func getParams(r *http.Request) fractal.Params {
   var prm fractal.Params
   prm.Threads = 4
-  prm.XMin = getBigFloat(r, "xmin", big.NewFloat(-2.0))
-  prm.XMax = getBigFloat(r, "xmax", big.NewFloat(2.0))
-  prm.YMin = getBigFloat(r, "ymin", big.NewFloat(-2.0))
-  prm.YMax = getBigFloat(r, "ymax", big.NewFloat(2.0))
+  prm.X = getBigFloat(r, "x", big.NewFloat(0))
+  prm.Y = getBigFloat(r, "y", big.NewFloat(0))
+  prm.XRange = getBigFloat(r, "xrange", big.NewFloat(3.0))
+  prm.YRange = getBigFloat(r, "yrange", big.NewFloat(3.0))
   prm.Width = getInt(r, "width", 1024)
   prm.Height = getInt(r, "height", 1024)
   prm.Iterations = getInt(r, "iterations", 200)
@@ -64,11 +64,11 @@ func handler(w http.ResponseWriter, r *http.Request) {
   prm := getParams(r)
   start := time.Now()
 
-  log.Printf("Starting render of (%s, %s) - (%s, %s) size %dx%d ...",
-    prm.XMin.String(),
-    prm.YMin.String(),
-    prm.XMax.String(),
-    prm.YMax.String(),
+  log.Printf("Starting render of (%s, %s) range (%s, %s) size %dx%d ...",
+    prm.X.String(),
+    prm.Y.String(),
+    prm.XRange.String(),
+    prm.YRange.String(),
     prm.Width,
     prm.Height)
 
@@ -81,11 +81,11 @@ func handler(w http.ResponseWriter, r *http.Request) {
     log.Println("unable to write image.")
   }
   elapsed := time.Since(start)
-  log.Printf("(%s, %s) - (%s, %s) size %dx%d elapsed %dms",
-    prm.XMin.String(),
-    prm.YMin.String(),
-    prm.XMax.String(),
-    prm.YMax.String(),
+  log.Printf("(%s, %s) range (%s, %s) size %dx%d elapsed %dms",
+    prm.X.String(),
+    prm.Y.String(),
+    prm.XRange.String(),
+    prm.YRange.String(),
     prm.Width,
     prm.Height,
     elapsed.Milliseconds())

@@ -68,15 +68,28 @@ export default function FractalImage({ fractal, onZoom }) {
       && ref.current.offsetWidth > 0
       && ref.current.offsetHeight > 0) {
 
-      // duplicate existing fractal
+      let scaleFactorWidth = ref.current.offsetWidth / canvas.width;
+      let scaleFactorHeight = ref.current.offsetHeight / canvas.height;
+
+      // boost the scale factors so we always show at least the same amount
+      // of fractal
+      if (scaleFactorWidth < 1.0) {
+        scaleFactorHeight *= (1.0 / scaleFactorWidth)
+        scaleFactorWidth = 1.0;
+      }
+
+      if (scaleFactorHeight < 1.0) {
+        scaleFactorWidth *= (1.0 / scaleFactorHeight)
+        scaleFactorHeight = 1.0;
+      }
+
+      // scale fractal ranges to match canvas changes
       const f = new Fractal();
       f.iterations = fractal.iterations;
       f.escape = fractal.escape;
       f.center = fractal.center;
-
-      // scale fractal ranges to match canvas changes
-      f.width = fractal.width * (ref.current.offsetWidth / canvas.width);
-      f.height = fractal.height * (ref.current.offsetHeight / canvas.height);
+      f.width = fractal.width * scaleFactorWidth;
+      f.height = fractal.height * scaleFactorHeight;
       onZoom(f);
     }
     setCanvas(new ImageCanvas(

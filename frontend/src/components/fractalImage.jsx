@@ -100,12 +100,18 @@ export default function FractalImage({ fractal, onZoom }) {
       window.removeEventListener('resize', debouncedWindowResize);
     };
   }, []);
+  
+  function setInitialSizes() {
+    canvas.width = canvas.height = 512;
+    fractal.center = new Point(-0.75, 0.00);
+    fractal.width = fractal.height = 2.50;
+    handleWindowResize();
+  }
+
 
   // set initial canvas to be window size before render
   useLayoutEffect(() => {
-    setCanvas(new ImageCanvas(
-        ref.current.offsetWidth, 
-        ref.current.offsetHeight));
+    setInitialSizes();
   }, []);
 
 

@@ -59,55 +59,25 @@ export default function FractalImage({ fractal, onZoom }) {
     onZoom(f);
   };
 
-  function adjustFractal(oldW, oldH, newW, newH) {
-
-    // duplicate existing fractal
-    const f = new Fractal();
-    f.iterations = fractal.iterations;
-    f.escape = fractal.escape;
-    f.center = fractal.center;
-    f.width = fractal.width;
-    f.height = fractal.height;
-
-    if (!((oldW > 0) && (oldH > 0) && (newW > 0) && (newH > 0))) {
-      // invalid dimensions => no changes
-      return;
-    }
-
-    // aspect ratios: width/height
-    const oldAspect = oldW / oldH;
-    const newAspect = newW / newH;
-
-    const ratioH = newH / oldH;
-    const ratioW = newW / oldW;
-
-    // New window is wider. That means we keep the same height and expand
-    // the image coordinates horizontally.
-    if (oldAspect < newAspect) {
-      f.width *= (ratioW / ratioH);
-      onZoom(f);
-    }
-    // New window is taller. That means we keep the same width and expand
-    // the image coordinates vertically.
-    else if (oldAspect > newAspect) {
-      f.height *= (ratioH / ratioW);
-      onZoom(f);
-    }
-    else {
-      // same aspect ratio - no change
-      return;
-    }
-  }
-
   // Set new fractal width and height based on current window size
   // If this is a resize (we have an existing width and height) then we
   // maintain the same aspect ratio.
   function handleWindowResize() {
-    // if we have existing dimensions
-    if ((canvas.width > 0) && (canvas.height > 0)) {
-      adjustFractal(
-        canvas.width, canvas.height,
-        ref.current.offsetWidth, ref.current.offsetHeight);
+    if ((canvas.width > 1)
+      && (canvas.height > 1)
+      && ref.current.offsetWidth > 0
+      && ref.current.offsetHeight > 0) {
+
+      // duplicate existing fractal
+      const f = new Fractal();
+      f.iterations = fractal.iterations;
+      f.escape = fractal.escape;
+      f.center = fractal.center;
+
+      // scale fractal ranges to match canvas changes
+      f.width = fractal.width * (ref.current.offsetWidth / canvas.width);
+      f.height = fractal.height * (ref.current.offsetHeight / canvas.height);
+      onZoom(f);
     }
     setCanvas(new ImageCanvas(
         ref.current.offsetWidth, 

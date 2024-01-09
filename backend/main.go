@@ -73,7 +73,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
     prm.Height)
 
   result := fractal.GenerateResult(prm)
-  palette := fractal.Grayscale{Shades: result.Iterations}
+  palette := fractal.Rainbow{NumColors: result.Iterations}
   buffer := fractal.CreatePNG(fractal.CreateRGBA(palette, result))
 
   w.Header().Set("Content-Type", "image/png")

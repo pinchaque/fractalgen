@@ -115,9 +115,13 @@ export default function FractalImage({ fractal, onZoom }) {
   }, []);
   
   function setInitialSizes() {
-    canvas.width = canvas.height = 512;
-    fractal.center = new Point(-0.75, 0.00);
-    fractal.width = fractal.height = 2.50;
+    const f = new Fractal();
+    f.iterations = 200;
+    f.escape = 2.0;
+    f.center = new Point(-0.75, 0.00);
+    f.width = f.height = 2.50;
+    onZoom(f);
+    setCanvas(new ImageCanvas(512, 512));
     handleWindowResize();
   }
 
@@ -143,13 +147,11 @@ export default function FractalImage({ fractal, onZoom }) {
   }
 
   return (
-    <div ref={ref} className="fractalImg">
-      <img
-        className="fractal"
-        src={url()}
-        alt="Fractal rendering"
-        onClick={handleClick}
-      />
+    <div 
+        ref={ref} 
+        className="fractalImg" 
+        style={{backgroundImage: `url(${url()})`}}
+        onClick={handleClick}>
     </div>
   );
 }

@@ -150,7 +150,8 @@ export default function FractalImage({ fractal, onZoom }) {
     <div 
         ref={ref} 
         className="fractalImg" 
-        style={{backgroundImage: `url(${url()})`}}
+        style={{backgroundImage: `url(${url()})`, 
+            backgroundRepeat: 'no-repeat'}}
         onClick={handleClick}>
     </div>
   );

@@ -115,13 +115,9 @@ export default function FractalImage({ fractal, onZoom }) {
   }, []);
   
   function setInitialSizes() {
-    const f = new Fractal();
-    f.iterations = 200;
-    f.escape = 2.0;
-    f.center = new Point(-0.75, 0.00);
-    f.width = f.height = 2.50;
-    onZoom(f);
-    setCanvas(new ImageCanvas(512, 512));
+    canvas.width = canvas.height = 512;
+    fractal.center = new Point(-0.75, 0.00);
+    fractal.width = fractal.height = 2.50;
     handleWindowResize();
   }
 

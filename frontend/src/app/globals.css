@@ -31,4 +31,5 @@ div.status {
   height: 20px;
   background: #000000;
   color: #00aaff;
+  white-space: nowrap;
 }

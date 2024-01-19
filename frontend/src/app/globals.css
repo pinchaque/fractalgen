@@ -32,4 +32,6 @@ div.status {
   background: #000000;
   color: #00aaff;
   white-space: nowrap;
+  font-size: 9pt;
+  padding: 2px;
 }

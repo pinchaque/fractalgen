@@ -21,11 +21,6 @@ div.fractal {
   width: 100%;
 }
 
-div.fractalImg {
-  height: 100%;
-  width: 100%;
-}  
-
 div.status {
   width: 100%;
   height: 20px;
@@ -35,3 +30,18 @@ div.status {
   font-size: 9pt;
   padding: 2px;
 }
+
+div.fractalImg {
+  height: 100%;
+  width: 100%;
+} 
+
+div.fractalImg table {
+  height: 100%;
+  width: 100%;
+} 
+
+div.fractalImg td {
+  background-repeat: no-repeat;
+}
+

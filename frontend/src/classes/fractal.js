@@ -24,6 +24,16 @@ export default class Fractal {
   set escape(x) { this.#escape = x; }
 
 
+  clone() {
+    const f = new Fractal();
+    f.center = new Point(this.#center.x, this.#center.y);
+    f.width = this.#width;
+    f.height = this.#height;
+    f.iterations = this.#iterations;
+    f.escape = this.#escape;
+    return f;
+  }
+
   get min() {
     return new Point(
         this.#center.x - (this.#width / 2.0),

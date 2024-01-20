@@ -1,3 +1,4 @@
+'use client'
 import { useEffect, useLayoutEffect, useState } from 'react';
 import Fractal from 'classes/fractal';
 import FractalStatus from 'components/fractalStatus';

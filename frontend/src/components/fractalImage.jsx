@@ -149,8 +149,8 @@ export default function FractalImage({ fractal, onZoom }) {
     const fracH = fractal.height / numRows();
 
     // center of the cell
-    const x = (col + 0.5) * fracW;
-    const y = (numRows() - row - 1 + 0.5) * fracH;
+    const x = (col + 0.5) * fracW + fractal.min.x;;
+    const y = (numRows() - row - 1 + 0.5) * fracH + fractal.min.y;
 
     const f = fractal.clone();
     f.center = new Point(x, y);

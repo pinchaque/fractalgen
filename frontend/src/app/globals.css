@@ -41,7 +41,9 @@ div.fractalImg table {
   width: 100%;
 } 
 
-div.fractalImg td {
+div.fractalImg table td {
   background-repeat: no-repeat;
+  color: #fff;
+  font-size: 8pt;
 }
 

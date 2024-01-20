@@ -24,8 +24,9 @@ export default function FractalImageCell({ row, col, getFractal, cellWidth, cell
   }
 
   return (
-    <td style={{backgroundImage: `url(${url()})`}}>&nbsp;
+    <div className="fractalImgCell"
+        style={{backgroundImage: `url(${url()})`, width: cellWidth, height: cellHeight}}>&nbsp;
         ({f().min.x}, {f().min.y})&mdash;({f().max.x}, {f().max.y})
-    </td>
+    </div>
   );
 }

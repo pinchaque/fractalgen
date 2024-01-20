@@ -13,7 +13,7 @@ export default function FractalImage({ fractal, onZoom }) {
   //const [localMousePos, setLocalMousePos] = useState({});
   const zoomInRatio = 0.25;
   const zoomOutRatio = 2.0;
-  const cellSize = 256;
+  const cellSize = 700;
   const [clickPos, setClickPos] = useState({});
   const [canvas, setCanvas] = useState(new ImageCanvas(1, 1));
 
@@ -38,6 +38,11 @@ export default function FractalImage({ fractal, onZoom }) {
     const percY = (canvas.height - localY - 1) / canvas.height;
     const pointY = fractal.min.y + (fractal.height * percY);
 
+    console.log(`Mouse (${event.clientX}, ${event.clientY})`);
+    console.log(`CurrTargetOffset (${event.currentTarget.offsetLeft}, ${event.currentTarget.offsetTop})`);
+    console.log(`TargetOffset (${event.target.offsetLeft}, ${event.target.offsetTop})`);
+    console.log(`Canvas (${localX}, ${localY}) => (${pointX}, ${pointY})`);
+
     return new Point(pointX, pointY);
   }
 
@@ -46,8 +51,9 @@ export default function FractalImage({ fractal, onZoom }) {
     const c = getEventCoords(event);
     setClickPos(c);
 
+
     // zoom in/out based on shift key
-    const zoomFactor = event.shiftKey ? zoomOutRatio : zoomInRatio;
+    const zoomFactor = 1.0; //event.shiftKey ? zoomOutRatio : zoomInRatio;
 
     // create our new zoomed and recentered fractal
     const f = fractal.clone();
@@ -166,11 +172,7 @@ export default function FractalImage({ fractal, onZoom }) {
 
   return (
     <div ref={ref} className="fractalImg" onClick={handleClick}>
-      <table>
-        <tbody>
-          {rows}
-        </tbody>
-      </table>
+      {rows}
     </div>
   );
 }

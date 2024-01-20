@@ -50,9 +50,7 @@ export default function FractalImage({ fractal, onZoom }) {
     const zoomFactor = event.shiftKey ? zoomOutRatio : zoomInRatio;
 
     // create our new zoomed and recentered fractal
-    const f = new Fractal();
-    f.iterations = fractal.iterations;
-    f.escape = fractal.escape;
+    const f = fractal.clone();
     f.center = c;
     f.width = fractal.width * zoomFactor;
     f.height = fractal.height * zoomFactor;
@@ -134,7 +132,7 @@ export default function FractalImage({ fractal, onZoom }) {
   }
 
   function numRows() {
-    return Math.round(0.5 + (canvas.width / cellSize));
+    return Math.round(0.5 + (canvas.height / cellSize));
   }
 
   function cellWidth() {
@@ -146,12 +144,18 @@ export default function FractalImage({ fractal, onZoom }) {
   }
 
   function getCellFractal(row, col) {
-    const f = new Fractal();
-    f.iterations = fractal.iterations;
-    f.escape = fractal.escape;
-    f.center = fractal.center;
-    f.width = fractal.width;
-    f.height = fractal.height;
+    // how much fractal is in each cell 
+    const fracW = fractal.width / numCols();
+    const fracH = fractal.height / numRows();
+
+    // center of the cell
+    const x = (col + 0.5) * fracW;
+    const y = (numRows() - row - 1 + 0.5) * fracH;
+
+    const f = fractal.clone();
+    f.center = new Point(x, y);
+    f.width = fracW;
+    f.height = fracH;
     return f;
   }
 

@@ -3,10 +3,17 @@
 import Fractal from 'classes/fractal';
 import ImageCanvas from 'classes/imageCanvas';
 
-export default function FractalImageCell({ row, col, getFractal, cellWidth, cellHeight }) {
+export default function FractalImageCell({ row, col, getFractal, clickCell, cellWidth, cellHeight }) {
 
   function f() {
     return getFractal(row, col);
+  }
+
+  const handleClick = (event) => {
+    // location of click with respect to cell
+    const localX = event.clientX - event.target.offsetLeft;
+    const localY = event.clientY - event.target.offsetTop;
+    clickCell(row, col, localX, localY);
   }
 
   // URL to generate the fractal image
@@ -25,8 +32,8 @@ export default function FractalImageCell({ row, col, getFractal, cellWidth, cell
 
   return (
     <div className="fractalImgCell"
-        style={{backgroundImage: `url(${url()})`, width: cellWidth, height: cellHeight}}>&nbsp;
-        ({f().min.x}, {f().min.y})&mdash;({f().max.x}, {f().max.y})
+      onClick={handleClick}
+      style={{backgroundImage: `url(${url()})`, width: cellWidth, height: cellHeight}}>&nbsp;
     </div>
   );
 }

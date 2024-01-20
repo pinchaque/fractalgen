@@ -46,24 +46,3 @@ div.fractalImgCell {
   color: #fff;
   font-size: 8pt;
 }
-
-
-
-div.fractalImg table {
-  height: 100%;
-  width: 100%;
-  display: block;
-} 
-
-div.fractalImg table tbody,
-div.fractalImg table tr,
-div.fractalImg table td {
-  display: block;
-}
-
-div.fractalImg table td {
-  background-repeat: no-repeat;
-  color: #fff;
-  font-size: 8pt;
-}
-

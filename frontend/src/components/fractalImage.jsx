@@ -9,51 +9,34 @@ import FractalImageRow from 'components/fractalImageRow';
 export default function FractalImage({ fractal, onZoom }) {
 
   const ref = useRef(null);
-  //const [globalMousePos, setGlobalMousePos] = useState({});
-  //const [localMousePos, setLocalMousePos] = useState({});
   const zoomInRatio = 0.25;
   const zoomOutRatio = 2.0;
-  const cellSize = 700;
+  const cellSize = 256;
   const [clickPos, setClickPos] = useState({});
   const [canvas, setCanvas] = useState(new ImageCanvas(1, 1));
 
+  function clickCell(row, col, cellX, cellY) {
+    // new image center is where user clicked
 
-  /*(
-  const handleLocalMouseMove = (event) => {
-    const localX = event.clientX - event.target.offsetLeft;
-    const localY = event.clientY - event.target.offsetTop;
-    setLocalMousePos({ x: localX, y: localY });
-  };
-  */
+    // convert cell x/y to canvas based on cell size in pixels
+    const canvasX = cellX + (col * cellWidth());
+    const canvasY = cellY + (row * cellHeight());
 
-  // converts canvas event coordinates into fractal coordinates
-  function getEventCoords(e) {
     // x axis is not inverted. Runs from 0 to (canvas.width-1)
-    const localX = event.clientX - event.target.offsetLeft;
-    const percX = (localX + 1) / canvas.width;
+    const percX = (canvasX + 1) / canvas.width;
     const pointX = fractal.min.x + (fractal.width * percX);
 
     // y axis is inverted
-    const localY = event.clientY - event.target.offsetTop;
-    const percY = (canvas.height - localY - 1) / canvas.height;
+    const percY = (canvas.height - canvasY - 1) / canvas.height;
     const pointY = fractal.min.y + (fractal.height * percY);
 
-    console.log(`Mouse (${event.clientX}, ${event.clientY})`);
-    console.log(`CurrTargetOffset (${event.currentTarget.offsetLeft}, ${event.currentTarget.offsetTop})`);
-    console.log(`TargetOffset (${event.target.offsetLeft}, ${event.target.offsetTop})`);
-    console.log(`Canvas (${localX}, ${localY}) => (${pointX}, ${pointY})`);
+    console.log(`Canvas (${canvasX}, ${canvasY}) => (${pointX}, ${pointY})`);
 
-    return new Point(pointX, pointY);
-  }
-
-  const handleClick = (event) => {
-    // new image center is where user clicked
-    const c = getEventCoords(event);
+    const c = new Point(pointX, pointY);
     setClickPos(c);
 
-
     // zoom in/out based on shift key
-    const zoomFactor = 1.0; //event.shiftKey ? zoomOutRatio : zoomInRatio;
+    const zoomFactor = event.shiftKey ? zoomOutRatio : zoomInRatio;
 
     // create our new zoomed and recentered fractal
     const f = fractal.clone();
@@ -64,6 +47,7 @@ export default function FractalImage({ fractal, onZoom }) {
     // tell parent to render the fractal
     onZoom(f);
   };
+
 
   // Set new fractal width and height based on current window size
   // If this is a resize (we have an existing width and height) then we
@@ -167,11 +151,11 @@ export default function FractalImage({ fractal, onZoom }) {
 
   const rows = [];
   for (let i = 0; i < numRows(); i++) {
-    rows.push(<FractalImageRow key={i} row={i} numCols={numCols()} getFractal={getCellFractal} cellWidth={cellWidth()} cellHeight={cellHeight()} />);
+    rows.push(<FractalImageRow key={i} row={i} numCols={numCols()} getFractal={getCellFractal} clickCell={clickCell} cellWidth={cellWidth()} cellHeight={cellHeight()} />);
   }
 
   return (
-    <div ref={ref} className="fractalImg" onClick={handleClick}>
+    <div ref={ref} className="fractalImg">
       {rows}
     </div>
   );

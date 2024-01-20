@@ -13,6 +13,7 @@ export default function FractalImage({ fractal, onZoom }) {
   //const [localMousePos, setLocalMousePos] = useState({});
   const zoomInRatio = 0.25;
   const zoomOutRatio = 2.0;
+  const cellSize = 256;
   const [clickPos, setClickPos] = useState({});
   const [canvas, setCanvas] = useState(new ImageCanvas(1, 1));
 
@@ -128,12 +129,42 @@ export default function FractalImage({ fractal, onZoom }) {
     setInitialSizes();
   }, []);
 
+  function numCols() {
+    return Math.round(0.5 + (canvas.width / cellSize));
+  }
+
+  function numRows() {
+    return Math.round(0.5 + (canvas.width / cellSize));
+  }
+
+  function cellWidth() {
+    return Math.round((canvas.width / numCols()) - 0.5);
+  }
+
+  function cellHeight() {
+    return Math.round((canvas.height / numRows()) - 0.5);
+  }
+
+  function getCellFractal(row, col) {
+    const f = new Fractal();
+    f.iterations = fractal.iterations;
+    f.escape = fractal.escape;
+    f.center = fractal.center;
+    f.width = fractal.width;
+    f.height = fractal.height;
+    return f;
+  }
+
+  const rows = [];
+  for (let i = 0; i < numRows(); i++) {
+    rows.push(<FractalImageRow key={i} row={i} numCols={numCols()} getFractal={getCellFractal} cellWidth={cellWidth()} cellHeight={cellHeight()} />);
+  }
 
   return (
     <div ref={ref} className="fractalImg" onClick={handleClick}>
       <table>
         <tbody>
-          <FractalImageRow fractal={fractal} canvas={canvas} />
+          {rows}
         </tbody>
       </table>
     </div>

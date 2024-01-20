@@ -4,11 +4,12 @@ import Fractal from 'classes/fractal';
 import ImageCanvas from 'classes/imageCanvas';
 import FractalImageCell from 'components/fractalImageCell';
 
-export default function FractalImageRow({ fractal, canvas }) {
+export default function FractalImageRow({ row, numCols, getFractal, cellWidth, cellHeight }) {
 
-  return (
-    <tr>
-      <FractalImageCell fractal={fractal} canvas={canvas} />
-    </tr>
-  );
+  const cells = [];
+  for (let j = 0; j < numCols; j++) {
+    cells.push(<FractalImageCell key={j} row={row} col={j} getFractal={getFractal} cellWidth={cellWidth} cellHeight={cellHeight} />);
+  }
+
+  return (<tr>{cells}</tr>);
 }

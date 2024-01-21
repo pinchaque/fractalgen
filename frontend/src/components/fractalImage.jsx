@@ -12,9 +12,15 @@ export default function FractalImage({ fractal, onZoom }) {
   const zoomInRatio = 0.25;
   const zoomOutRatio = 2.0;
   const cellSize = 256;
+  const defaultGrain = 8;
+  const grainIncDelay = 5000;
   const [clickPos, setClickPos] = useState({});
   const [canvas, setCanvas] = useState(new ImageCanvas(1, 1));
-  const [grain, setGrain] = useState(8);
+  const [grain, setGrain] = useState(defaultGrain);
+
+  let grainTimer = setTimeout(function incGrain() {
+    setGrain(2);
+  }, grainIncDelay);
 
   function clickCell(row, col, cellX, cellY) {
     // new image center is where user clicked
@@ -86,6 +92,7 @@ export default function FractalImage({ fractal, onZoom }) {
     setCanvas(new ImageCanvas(
         ref.current.offsetWidth, 
         ref.current.offsetHeight));
+    setGrain(defaultGrain);
   }
 
   // Handle window resizing after initial render

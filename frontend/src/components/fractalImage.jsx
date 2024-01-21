@@ -18,22 +18,30 @@ export default function FractalImage({ fractal, onZoom }) {
   const [canvas, setCanvas] = useState(new ImageCanvas(1, 1));
   const [grain, setGrain] = useState(grainDefault);
   let grainTimer = null;
+  let grainCurr = null; // needed to support incremental increase
 
   function grainInc() {
-    let newGrain = (grain / 2).toFixed();
+    let newGrain = (grainCurr / 2).toFixed();
     if (newGrain < 1) { newGrain = 1 }
-    console.log(`Updating grain from ${grain} to ${newGrain}`);
+    console.log(`Updating grain from ${grainCurr} to ${newGrain}`);
     setGrain(newGrain);
+    grainCurr = newGrain;
+    if (newGrain > 1) {
+      grainTimer = setTimeout(grainInc, grainIncDelay);
+    }
   }
 
   // reset to largest grain and remove timer
   function grainReset() {
     setGrain(grainDefault);
     clearTimeout(grainTimer);
+    grainCurr = grainDefault;
     grainTimer = setTimeout(grainInc, grainIncDelay);
   }
 
   function clickCell(row, col, cellX, cellY) {
+    grainReset();
+
     // new image center is where user clicked
 
     // convert cell x/y to canvas based on cell size in pixels
@@ -47,8 +55,6 @@ export default function FractalImage({ fractal, onZoom }) {
     // y axis is inverted
     const percY = (canvas.height - canvasY - 1) / canvas.height;
     const pointY = fractal.min.y + (fractal.height * percY);
-
-    console.log(`Canvas (${canvasX}, ${canvasY}) => (${pointX}, ${pointY})`);
 
     const c = new Point(pointX, pointY);
     setClickPos(c);
@@ -64,14 +70,13 @@ export default function FractalImage({ fractal, onZoom }) {
 
     // tell parent to render the fractal
     onZoom(f);
-    grainReset();
   };
-
 
   // Set new fractal width and height based on current window size
   // If this is a resize (we have an existing width and height) then we
   // maintain the same aspect ratio.
   function handleWindowResize() {
+    grainReset();
     if ((canvas.width > 1)
       && (canvas.height > 1)
       && ref.current.offsetWidth > 0
@@ -101,7 +106,6 @@ export default function FractalImage({ fractal, onZoom }) {
       f.height = fractal.height * scaleFactorHeight;
       onZoom(f);
     }
-    grainReset();
     setCanvas(new ImageCanvas(
         ref.current.offsetWidth, 
         ref.current.offsetHeight));
@@ -169,7 +173,6 @@ export default function FractalImage({ fractal, onZoom }) {
     return f;
   }
 
-
   const rows = [];
   for (let i = 0; i < numRows(); i++) {
     rows.push(<FractalImageRow
@@ -182,9 +185,6 @@ export default function FractalImage({ fractal, onZoom }) {
         cellHeight={cellHeight()}
         grain={grain} />);
   }
-
-  console.log("FractalImage is called");
-  //grainReset();
 
   return (
     <div ref={ref} className="fractalImg">

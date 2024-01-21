@@ -12,15 +12,26 @@ export default function FractalImage({ fractal, onZoom }) {
   const zoomInRatio = 0.25;
   const zoomOutRatio = 2.0;
   const cellSize = 256;
-  const defaultGrain = 8;
-  const grainIncDelay = 5000;
+  const grainDefault = 8;
+  const grainIncDelay = 3000;
   const [clickPos, setClickPos] = useState({});
   const [canvas, setCanvas] = useState(new ImageCanvas(1, 1));
-  const [grain, setGrain] = useState(defaultGrain);
+  const [grain, setGrain] = useState(grainDefault);
+  let grainTimer = null;
 
-  let grainTimer = setTimeout(function incGrain() {
-    setGrain(2);
-  }, grainIncDelay);
+  function grainInc() {
+    let newGrain = (grain / 2).toFixed();
+    if (newGrain < 1) { newGrain = 1 }
+    console.log(`Updating grain from ${grain} to ${newGrain}`);
+    setGrain(newGrain);
+  }
+
+  // reset to largest grain and remove timer
+  function grainReset() {
+    setGrain(grainDefault);
+    clearTimeout(grainTimer);
+    grainTimer = setTimeout(grainInc, grainIncDelay);
+  }
 
   function clickCell(row, col, cellX, cellY) {
     // new image center is where user clicked
@@ -53,6 +64,7 @@ export default function FractalImage({ fractal, onZoom }) {
 
     // tell parent to render the fractal
     onZoom(f);
+    grainReset();
   };
 
 
@@ -89,10 +101,10 @@ export default function FractalImage({ fractal, onZoom }) {
       f.height = fractal.height * scaleFactorHeight;
       onZoom(f);
     }
+    grainReset();
     setCanvas(new ImageCanvas(
         ref.current.offsetWidth, 
         ref.current.offsetHeight));
-    setGrain(defaultGrain);
   }
 
   // Handle window resizing after initial render
@@ -157,6 +169,7 @@ export default function FractalImage({ fractal, onZoom }) {
     return f;
   }
 
+
   const rows = [];
   for (let i = 0; i < numRows(); i++) {
     rows.push(<FractalImageRow
@@ -169,6 +182,9 @@ export default function FractalImage({ fractal, onZoom }) {
         cellHeight={cellHeight()}
         grain={grain} />);
   }
+
+  console.log("FractalImage is called");
+  //grainReset();
 
   return (
     <div ref={ref} className="fractalImg">

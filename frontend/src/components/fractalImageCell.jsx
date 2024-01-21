@@ -27,7 +27,7 @@ export default function FractalImageCell({ row, col, getFractal, clickCell, cell
     u.searchParams.append("height", cellHeight);
     u.searchParams.append("iterations", f().iterations);
     u.searchParams.append("escape", f().escape);
-    u.searchParams.append("grain", grain);
+    u.searchParams.append("grain", parseInt(grain));
     return u.href
   }
 

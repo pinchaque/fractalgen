@@ -14,4 +14,5 @@ type Params struct {
   Iterations  int
   Threads     int
   Escape      *big.Float
+  Grain       int
 }

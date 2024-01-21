@@ -1,7 +1,6 @@
 package main
 
 import (
-//  "fmt"
   "github.com/pinchaque/fractalgen/fractal"
   "log"
   "net/http"
@@ -57,6 +56,7 @@ func getParams(r *http.Request) fractal.Params {
   prm.Height = getInt(r, "height", 1024)
   prm.Iterations = getInt(r, "iterations", 200)
   prm.Escape = getBigFloat(r, "escape", big.NewFloat(2.0))
+  prm.Grain = getInt(r, "grain", 1)
   return prm
 }
 
@@ -72,9 +72,23 @@ func handler(w http.ResponseWriter, r *http.Request) {
     prm.Width,
     prm.Height)
 
+  // save the specified image size
+  imgW := prm.Width
+  imgH := prm.Height
+
+  // if the grain is >1 then we will generate a less detailed fractal and
+  // upsample it later
+  if prm.Grain > 1 {
+    minSize := 50
+    prm.Width = imgW / prm.Grain
+    prm.Height = imgH / prm.Grain
+    if prm.Width < minSize { prm.Width = minSize }
+    if prm.Height < minSize { prm.Height = minSize }
+  }
+
   result := fractal.GenerateResult(prm)
   palette := fractal.Rainbow{NumColors: result.Iterations}
-  buffer := fractal.CreatePNG(fractal.CreateRGBA(palette, result))
+  buffer := fractal.CreatePNG(fractal.CreateRGBA(palette, result, imgW, imgH))
 
   w.Header().Set("Content-Type", "image/png")
   w.Header().Set("Content-Length", strconv.Itoa(len(buffer.Bytes())))

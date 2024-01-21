@@ -64,14 +64,6 @@ func handler(w http.ResponseWriter, r *http.Request) {
   prm := getParams(r)
   start := time.Now()
 
-  log.Printf("Starting render of (%s, %s) range (%s, %s) size %dx%d ...",
-    prm.X.String(),
-    prm.Y.String(),
-    prm.XRange.String(),
-    prm.YRange.String(),
-    prm.Width,
-    prm.Height)
-
   // save the specified image size
   imgW := prm.Width
   imgH := prm.Height
@@ -96,12 +88,13 @@ func handler(w http.ResponseWriter, r *http.Request) {
     log.Println("unable to write image.")
   }
   elapsed := time.Since(start)
-  log.Printf("(%s, %s) range (%s, %s) size %dx%d elapsed %dms",
+  log.Printf("(%s, %s) range (%s, %s) size %dx%d grain %d elapsed %dms",
     prm.X.String(),
     prm.Y.String(),
     prm.XRange.String(),
     prm.YRange.String(),
-    prm.Width,
-    prm.Height,
+    imgW,
+    imgH,
+    prm.Grain,
     elapsed.Milliseconds())
 }

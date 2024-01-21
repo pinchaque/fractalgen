@@ -1,12 +1,9 @@
 'use client'
 
-import { useState } from 'react';
 import Fractal from 'classes/fractal';
 import ImageCanvas from 'classes/imageCanvas';
 
-export default function FractalImageCell({ row, col, getFractal, clickCell, cellWidth, cellHeight }) {
-
-  const [grain, setGrain] = useState(8);
+export default function FractalImageCell({ row, col, getFractal, clickCell, cellWidth, cellHeight, grain }) {
 
   function f() {
     return getFractal(row, col);
@@ -33,20 +30,6 @@ export default function FractalImageCell({ row, col, getFractal, clickCell, cell
     u.searchParams.append("grain", grain);
     return u.href
   }
-
-  let delay = 2000;
-  let timerId = setTimeout(function incGrain() {
-    setGrain(2)
-    /*
-    if (grain == 2) {
-      setGrain(1);
-      clearTimeout(timerId)
-    } else {
-      setGrain(grain / 2)
-      timerId = setTimeout(incGrain, delay)
-    }
-    */
-  }, delay);
 
   return (
     <div className="fractalImgCell"

@@ -14,6 +14,7 @@ export default function FractalImage({ fractal, onZoom }) {
   const cellSize = 256;
   const [clickPos, setClickPos] = useState({});
   const [canvas, setCanvas] = useState(new ImageCanvas(1, 1));
+  const [grain, setGrain] = useState(8);
 
   function clickCell(row, col, cellX, cellY) {
     // new image center is where user clicked
@@ -151,7 +152,15 @@ export default function FractalImage({ fractal, onZoom }) {
 
   const rows = [];
   for (let i = 0; i < numRows(); i++) {
-    rows.push(<FractalImageRow key={i} row={i} numCols={numCols()} getFractal={getCellFractal} clickCell={clickCell} cellWidth={cellWidth()} cellHeight={cellHeight()} />);
+    rows.push(<FractalImageRow
+        key={i}
+        row={i}
+        numCols={numCols()}
+        getFractal={getCellFractal}
+        clickCell={clickCell}
+        cellWidth={cellWidth()}
+        cellHeight={cellHeight()}
+        grain={grain} />);
   }
 
   return (

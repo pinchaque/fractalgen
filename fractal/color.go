@@ -4,7 +4,6 @@ import (
   "image"
   "bytes"
   "image/png"
-  "log"
   )
 
 
@@ -18,7 +17,6 @@ func CreateRGBA(p Palette, r *Result, w int, h int) *image.RGBA {
 
 // creates image the same size as the result
 func CreateRGBAOrig(p Palette, r *Result) *image.RGBA {
-  log.Printf("Outputting original size (%d, %d)", r.Width, r.Height)
   img := image.NewRGBA(image.Rect(0, 0, r.Width, r.Height))
   for x := 0; x < r.Width; x++ {
     for y := 0; y < r.Height; y++ {
@@ -31,7 +29,6 @@ func CreateRGBAOrig(p Palette, r *Result) *image.RGBA {
 // creates RGBA of specified size from given result using simple-minded
 // sampling
 func CreateRGBASampled(p Palette, r *Result, w int, h int) *image.RGBA {
-  log.Printf("Resampling from (%d, %d) to (%d, %d)", r.Width, r.Height, w, h)
   img := image.NewRGBA(image.Rect(0, 0, w, h))
 
   // ratios to use for sampling

@@ -20,7 +20,7 @@ export default function FractalImage({ fractal, onZoom }) {
   let grainCurr = null; // needed to support incremental increase
 
   function grainDelay(g) {
-    return 1000 + ((grainDefault - g) * 2000);
+    return 2000 + ((grainDefault - g) * 1000);
   }
 
   function grainInc() {

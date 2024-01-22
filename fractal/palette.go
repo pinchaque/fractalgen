@@ -13,23 +13,24 @@ type Rainbow struct {
 }
 
 func (o Rainbow) color(i int) color.Color {
+
   if i >= o.NumColors {
     return color.Black
   } else {
+    // # of colors in each rainbow band
+    bandSize := 24
+    numBands := 6 // colors in our rainbow
+
     alpha := uint8(255)
 
-    // # of colors in each rainbow band
-    colorSize := (o.NumColors / 6) + 1
-
     // which color band are we in (0..5)
-    band := i / colorSize
+    band := (i / bandSize) % numBands
 
     // what is the index within that band
-    bandIndex := i % colorSize
-
+    bandIndex := i % bandSize
 
     // figure out the uint8 color strength
-    x := 1.0 - (float64(bandIndex) / float64(colorSize))
+    x := 1.0 - (float64(bandIndex) / float64(bandSize))
     val := uint8((x * 255.0) + 0.5)
 
     r := uint8(0)

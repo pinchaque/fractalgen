@@ -13,21 +13,23 @@ export default function FractalImage({ fractal, onZoom }) {
   const zoomOutRatio = 2.0;
   const cellSize = 256;
   const grainDefault = 8;
-  const grainIncDelay = 3000;
   const [clickPos, setClickPos] = useState({});
   const [canvas, setCanvas] = useState(new ImageCanvas(1, 1));
   const [grain, setGrain] = useState(grainDefault);
   let grainTimer = null;
   let grainCurr = null; // needed to support incremental increase
 
+  function grainDelay(g) {
+    return 1000 + ((grainDefault - g) * 2000);
+  }
+
   function grainInc() {
     let newGrain = (grainCurr / 2).toFixed();
     if (newGrain < 1) { newGrain = 1 }
-    console.log(`Updating grain from ${grainCurr} to ${newGrain}`);
     setGrain(newGrain);
     grainCurr = newGrain;
     if (newGrain > 1) {
-      grainTimer = setTimeout(grainInc, grainIncDelay);
+      grainTimer = setTimeout(grainInc, grainDelay(newGrain));
     }
   }
 
@@ -36,7 +38,7 @@ export default function FractalImage({ fractal, onZoom }) {
     setGrain(grainDefault);
     clearTimeout(grainTimer);
     grainCurr = grainDefault;
-    grainTimer = setTimeout(grainInc, grainIncDelay);
+    grainTimer = setTimeout(grainInc, grainDelay(grainCurr));
   }
 
   function clickCell(row, col, cellX, cellY) {

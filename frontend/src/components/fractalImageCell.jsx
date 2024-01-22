@@ -3,7 +3,7 @@
 import Fractal from 'classes/fractal';
 import ImageCanvas from 'classes/imageCanvas';
 
-export default function FractalImageCell({ row, col, getFractal, clickCell, cellWidth, cellHeight }) {
+export default function FractalImageCell({ row, col, getFractal, clickCell, cellWidth, cellHeight, grain }) {
 
   function f() {
     return getFractal(row, col);
@@ -27,6 +27,7 @@ export default function FractalImageCell({ row, col, getFractal, clickCell, cell
     u.searchParams.append("height", cellHeight);
     u.searchParams.append("iterations", f().iterations);
     u.searchParams.append("escape", f().escape);
+    u.searchParams.append("grain", parseInt(grain));
     return u.href
   }
 

@@ -5,7 +5,7 @@ import ImageCanvas from 'classes/imageCanvas';
 import FractalImageCell from 'components/fractalImageCell';
 
 export default function FractalImageRow({ 
-  row, numCols, getFractal, clickCell, cellWidth, cellHeight }) {
+  row, numCols, getFractal, clickCell, cellWidth, cellHeight, grain }) {
 
   const cells = [];
   for (let j = 0; j < numCols; j++) {
@@ -16,7 +16,8 @@ export default function FractalImageRow({
         getFractal={getFractal} 
         clickCell={clickCell}
         cellWidth={cellWidth} 
-        cellHeight={cellHeight} />);
+        cellHeight={cellHeight}
+        grain={grain} />);
   }
 
   return (
